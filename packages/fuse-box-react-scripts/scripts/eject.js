@@ -52,10 +52,13 @@ prompt(
 
   var files = [
     path.join('config', 'paths.js'),
+    path.join('config', 'polyfills.js'),
+    path.join('config', 'jest', 'cssTransform.js'),
+    path.join('config', 'jest', 'fileTransform.js'),
     path.join('scripts', 'build.js'),
     path.join('scripts', 'start.js'),
     path.join('scripts', 'test.js'),
-    path.join('utils', 'build-common.js')
+    path.join('scripts', 'build-common.js')
   ];
 
   // Ensure that the app folder is clean and we won't override any files

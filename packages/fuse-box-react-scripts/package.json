@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-scripts",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "description": "Configuration and scripts for Fuse-Box Create React App.",
   "repository": "offgridnetworks/fuse-box-create-react-app",
   "license": "BSD-3-Clause",
@@ -26,11 +26,13 @@
   "dependencies": {
     "babel-core": "^6.20.0",
     "babel-preset-react-app": "^2.0.1",
+    "babel-jest": "18.0.0",
+    "whatwg-fetch": "2.0.2",
     "chalk": "1.1.3",
-    "cross-spawn": "4.0.2",
-    "detect-port": "1.0.1",
-    "dotenv": "2.0.0",
-    "fs-extra": "0.30.0",
+    "cross-spawn": "5.0.1",
+    "detect-port": "1.1.0",
+    "dotenv": "4.0.0",
+    "fs-extra": "2.0.0",
     "jest": "18.1.0",
     "react-dev-utils": "^0.5.0",
     "fuse-box": "^1.3.116"

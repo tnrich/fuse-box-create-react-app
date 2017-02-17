@@ -24,7 +24,7 @@ var chalk = require('chalk');
 var fs = require('fs-extra');
 var url = require('url');
 var path = require('path');
-var buildcommon = require('../utils/build-common');
+var buildcommon = require('./build-common');
 var paths = require('../config/paths');
 var checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 

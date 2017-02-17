@@ -32,7 +32,7 @@ var openBrowser = require('react-dev-utils/openBrowser');
 var prompt = require('react-dev-utils/prompt');
 var fs = require('fs-extra');
 var paths = require('../config/paths');
-var buildcommon = require('../utils/build-common');
+var buildcommon = require('./build-common');
 
 var url = require('url');
 var path = require('path');
