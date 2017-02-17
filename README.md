@@ -56,7 +56,7 @@ When you’re ready to deploy to production, create a minified bundle with `npm 
 Install it once globally:
 
 ```sh
-npm install -g create-react-app
+npm install -g fuse-box-create-react-app
 ```
 
 **You’ll need to have Node >= 6 on your machine to satisfy FuseBox dependencies**.
