@@ -1,20 +1,45 @@
-# Create React App [![Build Status](https://travis-ci.org/facebookincubator/create-react-app.svg?branch=master)](https://travis-ci.org/facebookincubator/create-react-app)
+# FuseBox Create React App [![Build Status](https://travis-ci.org/facebookincubator/create-react-app.svg?branch=master)](https://travis-ci.org/facebookincubator/create-react-app)
 
-Create React apps with no build configuration, with fuse-box.
-[FEBRUARY 2017] Forked from the Facebook Incubator version that uses webpack.
+Create React apps with no build configuration, with [FuseBox](http://fuse-box.org).
+[FEBRUARY 2017] Forked from the Facebook Incubator version that to use [FuseBox](http://fuse-box.org) instead of webpack.
 
 * [Getting Started](#getting-started) – How to create a new app.
 * [User Guide](https://github.com/offgridnetworks/fuse-box-create-react-app/blob/master/packages/fuse-box-react-scripts/template/README.md) – How to develop apps bootstrapped with Create React App.
 
 Create React App works on macOS, Windows, and Linux.  
-If something doesn’t work please [file an issue](https://github.com/facebookincubator/create-react-app/issues/new).
+
+## Contributors
+
+This was a quick fork of Facebook's great work to use the very fast FuseBox transpiler. 
+
+If you'd like to take over the project please feel free to request as it's not on our long term roadmap, but there was a gap and we needed it!
 
 ## tl;dr
 
 ```sh
-npm install -g create-react-app
+npm install -g fuse-box-create-react-app
 
 create-react-app my-app
+cd my-app/
+npm start
+```
+
+or using original Facebook create-react-app
+
+```sh
+npm install -g create-react-app
+
+create-react-app my-app --scripts-version fuse-box-react-scripts
+cd my-app/
+npm start
+```
+
+or to force using Facebook webpack scripts after installing this version
+
+```sh
+npm install -g fuse-box-create-react-app
+
+create-react-app my-app --scripts-version react-scripts 
 cd my-app/
 npm start
 ```
@@ -34,11 +59,11 @@ Install it once globally:
 npm install -g create-react-app
 ```
 
-**You’ll need to have Node >= 4 on your machine**.
+**You’ll need to have Node >= 6 on your machine to satisfy FuseBox dependencies**.
 
-**We strongly recommend to use Node >= 6 and npm >= 3 for faster installation speed and better disk usage.** You can use [nvm](https://github.com/creationix/nvm#usage) to easily switch Node versions between different projects.
+You can use [nvm](https://github.com/creationix/nvm#usage) to easily switch Node versions between different projects.
 
-**This tool doesn’t assume a Node backend**. The Node installation is only required for the build tools that rely on it locally, such as Webpack and Babel.
+**This tool doesn’t assume a Node backend**. The Node installation is only required for the build tools that rely on it locally, such as FuseBox and Babel.
 
 ### Creating an App
 
@@ -140,7 +165,7 @@ Please refer to the [User Guide](https://github.com/offgridnetworks/fuse-box-cre
 
 ## Philosophy
 
-* **One Dependency:** There is just one build dependency. It uses Webpack, Babel, ESLint, and other amazing projects, but provides a cohesive curated experience on top of them.
+* **One Dependency:** There is just one build dependency. It uses FuseBox, Babel, ESLint, and other amazing projects, but provides a cohesive curated experience on top of them.
 
 * **Convention over Configuration:** You don't need to configure anything by default. Reasonably good configuration of both development and production builds is handled for you so you can focus on writing code.
 
@@ -165,7 +190,7 @@ Please refer to the [User Guide](https://github.com/offgridnetworks/fuse-box-cre
 
 **If you’re a power user** and you aren’t happy with the default configuration, you can “eject” from the tool and use it as a boilerplate generator.
 
-Running `npm run eject` copies all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. Commands like `npm start` and `npm run build` will still work, but they will point to the copied scripts so you can tweak them. At this point, you’re on your own.
+Running `npm run eject` copies all the configuration files and the transitive dependencies (FuseBox, Babel, ESLint, etc) right into your project so you have full control over them. Commands like `npm start` and `npm run build` will still work, but they will point to the copied scripts so you can tweak them. At this point, you’re on your own.
 
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
@@ -188,7 +213,7 @@ Some of them might get added in the future if they are stable, are useful to maj
 The tools used by Create React App are subject to change.
 Currently it is a thin layer on top of many amazing community projects, such as:
 
-* [webpack](https://webpack.github.io/) with [webpack-dev-server](https://github.com/webpack/webpack-dev-server), [html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin) and [style-loader](https://github.com/webpack/style-loader)
+* [FuseBox](https://FuseBox.github.io/) with [FuseBox-dev-server](https://github.com/FuseBox/FuseBox-dev-server), [html-FuseBox-plugin](https://github.com/ampedandwired/html-FuseBox-plugin) and [style-loader](https://github.com/FuseBox/style-loader)
 * [Babel](http://babeljs.io/) with ES6 and extensions used by Facebook (JSX, [object spread](https://github.com/sebmarkbage/ecmascript-rest-spread/commits/master), [class properties](https://github.com/jeffmo/es-class-public-fields))
 * [Autoprefixer](https://github.com/postcss/autoprefixer)
 * [ESLint](http://eslint.org/)
@@ -214,6 +239,7 @@ We are grateful to the authors of existing related projects for their ideas and 
 If you don’t agree with the choices made in this project, you might want to explore alternatives with different tradeoffs.<br>
 Some of the more popular and actively maintained ones are:
 
+* [facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app)
 * [insin/nwb](https://github.com/insin/nwb)
 * [mozilla/neo](https://github.com/mozilla/neo)
 * [NYTimes/kyt](https://github.com/NYTimes/kyt)
@@ -232,5 +258,5 @@ Notable alternatives also include:
 * [dev-toolkit](https://github.com/stoikerty/dev-toolkit)
 * [tarec](https://github.com/geowarin/tarec)
 
-You can also use module bundlers like [webpack](http://webpack.github.io) and [Browserify](http://browserify.org/) directly.<br>
+You can also use module bundlers like [FuseBox](http://fuse-box.org) and [Browserify](http://browserify.org/) directly.<br>
 React documentation includes [a walkthrough](https://facebook.github.io/react/docs/package-management.html) on this topic.

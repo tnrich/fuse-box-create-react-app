@@ -82,22 +82,22 @@ You can find the most recent version of this guide [here](https://github.com/off
 
 Fuse-Box Create React App is divided into two packages:
 
-* `create-react-app` is a global command-line utility that you use to create new projects.
+* `fuse-box-create-react-app` is a global command-line utility that you use to create new projects.
 * `fuse-box-react-scripts` is a development dependency in the generated projects (including this one).
 
-You almost never need to update `create-react-app` itself: it delegates all the setup to `fuse-box-react-scripts`.
+You almost never need to update `fuse-box-create-react-app` itself: it delegates all the setup to `fuse-box-react-scripts`.
 
-When you run `create-react-app`, it always creates the project with the latest version of `fuse-box-react-scripts` so you’ll get all the new features and improvements in newly created apps automatically.
+When you run `fuse-box-create-react-app`, it always creates the project with the latest version of `fuse-box-react-scripts` so you’ll get all the new features and improvements in newly created apps automatically.
 
-To update an existing project to a new version of `fuse-box-react-scripts`, [open the changelog](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md), find the version you’re currently on (check `package.json` in this folder if you’re not sure), and apply the migration instructions for the newer versions.
+To update an existing project to a new version of `fuse-box-react-scripts`, [open the changelog](https://github.com/offgridnetworks/fuse-box-create-react-app/blob/master/CHANGELOG.md), find the version you’re currently on (check `package.json` in this folder if you’re not sure), and apply the migration instructions for the newer versions.
 
-In most cases bumping the `fuse-box-react-scripts` version in `package.json` and running `npm install` in this folder should be enough, but it’s good to consult the [changelog](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md) for potential breaking changes.
+In most cases bumping the `fuse-box-react-scripts` version in `package.json` and running `npm install` in this folder should be enough, but it’s good to consult the [changelog](https://github.com/offgridnetworks/fuse-box-create-react-app/blob/master/CHANGELOG.md) for potential breaking changes.
 
 We commit to keeping the breaking changes minimal so you can upgrade `fuse-box-react-scripts` painlessly.
 
 ## Sending Feedback
 
-We are always open to [your feedback](https://github.com/facebookincubator/create-react-app/issues).
+We are always open to [your feedback](https://github.com/facebookincubator/fuse-box-create-react-app/issues).
 
 ## Folder Structure
 
@@ -127,8 +127,8 @@ For the project to build, **these files must exist with exact filenames**:
 
 You can delete or rename the other files.
 
-You may create subdirectories inside `src`. For faster rebuilds, only files inside `src` are processed by Webpack.<br>
-You need to **put any JS and CSS files inside `src`**, or Webpack won’t see them.
+You may create subdirectories inside `src`. For faster rebuilds, only files inside `src` are processed by FuseBox.<br>
+You need to **put any JS and CSS files inside `src`**, or FuseBox won’t see them.
 
 Only files inside `public` can be used from `public/index.html`.<br>
 Read instructions below for using assets from JavaScript and HTML.
@@ -169,7 +169,7 @@ See the section about [deployment](#deployment) for more information.
 
 If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Instead, it will copy all the configuration files and the transitive dependencies (Fusebox, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
@@ -316,7 +316,7 @@ Learn more about ES6 modules:
 
 ## Adding a Stylesheet
 
-This project setup uses [Webpack](https://webpack.github.io/) for handling all assets. Webpack offers a custom way of “extending” the concept of `import` beyond JavaScript. To express that a JavaScript file depends on a CSS file, you need to **import the CSS from the JavaScript file**:
+This project setup uses [Fusebox](http://fuse-box.org) for handling all assets. 
 
 ### `Button.css`
 
@@ -330,7 +330,7 @@ This project setup uses [Webpack](https://webpack.github.io/) for handling all a
 
 ```js
 import React, { Component } from 'react';
-import './Button.css'; // Tell Webpack that Button.js uses these styles
+import './Button.css'; // Tell FuseBox that Button.js uses these styles
 
 class Button extends Component {
   render() {
@@ -340,11 +340,11 @@ class Button extends Component {
 }
 ```
 
-**This is not required for React** but many people find this feature convenient. You can read about the benefits of this approach [here](https://medium.com/seek-ui-engineering/block-element-modifying-your-javascript-components-d7f99fcab52b). However you should be aware that this makes your code less portable to other build tools and environments than Webpack.
+**This is not required for React** but many people find this feature convenient. You can read about the benefits of this approach [here](https://medium.com/seek-ui-engineering/block-element-modifying-your-javascript-components-d7f99fcab52b). However you should be aware that this makes your code less portable to other build tools and environments than FuseBox.
 
 In development, expressing dependencies this way allows your styles to be reloaded on the fly as you edit them. In production, all CSS files will be concatenated into a single minified `.css` file in the build output.
 
-If you are concerned about using Webpack-specific semantics, you can put all your CSS right into `src/index.css`. It would still be imported from `src/index.js`, but you could always remove that import if you later migrate to a different build tool.
+If you are concerned about using FuseBox-specific semantics, you can put all your CSS right into `src/index.css`. It would still be imported from `src/index.js`, but you could always remove that import if you later migrate to a different build tool.
 
 ## Post-Processing CSS
 
@@ -434,15 +434,15 @@ Now running `npm start` and `npm run build` also builds Sass files. Note that `n
 
 ## Adding Images and Fonts
 
-With Webpack, using static assets like images and fonts works similarly to CSS.
+With FuseBox, using static assets like images and fonts works similarly to CSS.
 
-You can **`import` an image right in a JavaScript module**. This tells Webpack to include that image in the bundle. Unlike CSS imports, importing an image or a font gives you a string value. This value is the final image path you can reference in your code.
+You can **`import` an image right in a JavaScript module**. This tells FuseBox to include that image in the bundle. Unlike CSS imports, importing an image or a font gives you a string value. This value is the final image path you can reference in your code.
 
 Here is an example:
 
 ```js
 import React from 'react';
-import logo from './logo.png'; // Tell Webpack this JS file uses this image
+import logo from './logo.png'; // Tell FuseBox this JS file uses this image
 
 console.log(logo); // /logo.84287d09.png
 
@@ -454,7 +454,7 @@ function Header() {
 export default Header;
 ```
 
-This ensures that when the project is built, Webpack will correctly move the images into the build folder, and provide us with correct paths.
+This ensures that when the project is built, FuseBox will correctly move the images into the build folder, and provide us with correct paths.
 
 This works in CSS too:
 
@@ -464,9 +464,9 @@ This works in CSS too:
 }
 ```
 
-Webpack finds all relative module references in CSS (they start with `./`) and replaces them with the final paths from the compiled bundle. If you make a typo or accidentally delete an important file, you will see a compilation error, just like when you import a non-existent JavaScript module. The final filenames in the compiled bundle are generated by Webpack from content hashes. If the file content changes in the future, Webpack will give it a different name in production so you don’t need to worry about long-term caching of assets.
+FuseBox finds all relative module references in CSS (they start with `./`) and replaces them with the final paths from the compiled bundle. If you make a typo or accidentally delete an important file, you will see a compilation error, just like when you import a non-existent JavaScript module. The final filenames in the compiled bundle are generated by FuseBox from content hashes. If the file content changes in the future, FuseBox will give it a different name in production so you don’t need to worry about long-term caching of assets.
 
-Please be advised that this is also a custom feature of Webpack.
+Please be advised that this is also a custom feature of FuseBox.
 
 **It is not required for React** but many people enjoy it (and React Native uses a similar mechanism for images).<br>
 An alternative way of handling static assets is described in the next section.
@@ -494,7 +494,7 @@ This mechanism provides a number of benefits:
 
 However there is an **escape hatch** that you can use to add an asset outside of the module system.
 
-If you put a file into the `public` folder, it will **not** be processed by Webpack. Instead it will be copied into the build folder untouched.   To reference assets in the `public` folder, you need to use a special variable called `PUBLIC_URL`.
+If you put a file into the `public` folder, it will **not** be processed by FuseBox. Instead it will be copied into the build folder untouched.   To reference assets in the `public` folder, you need to use a special variable called `PUBLIC_URL`.
 
 Inside `index.html`, you can use it like this:
 
@@ -531,7 +531,7 @@ The `public` folder is useful as a workaround for a number of less common cases:
 * You need a file with a specific name in the build output, such as [`manifest.webmanifest`](https://developer.mozilla.org/en-US/docs/Web/Manifest).
 * You have thousands of images and need to dynamically reference their paths.
 * You want to include a small script like [`pace.js`](http://github.hubspot.com/pace/docs/welcome/) outside of the bundled code.
-* Some library may be incompatible with Webpack and you have no other option but to include it as a `<script>` tag.
+* Some library may be incompatible with FuseBox and you have no other option but to include it as a `<script>` tag.
 
 Note that if you add a `<script>` that declares global variables, you also need to read the next section on using them.
 
@@ -603,7 +603,7 @@ default you will have `NODE_ENV` defined for you, and any other environment vari
 
 **The environment variables are embedded during the build time**. Since Create React App produces a static HTML/CSS/JS bundle, it can’t possibly read them at runtime. To read them at runtime, you would need to load HTML into memory on the server and replace placeholders in runtime, just like [described here](#injecting-data-from-the-server-into-the-page). Alternatively you can rebuild the app on the server anytime you change them.
 
->Note: You must create custom environment variables beginning with `REACT_APP_`. Any other variables except `NODE_ENV` will be ignored to avoid accidentally [exposing a private key on the machine that could have the same name](https://github.com/facebookincubator/create-react-app/issues/865#issuecomment-252199527).
+>Note: You must create custom environment variables beginning with `REACT_APP_`. Any other variables except `NODE_ENV` will be ignored to avoid accidentally [exposing a private key on the machine that could have the same name](https://github.com/facebookincubator/fuse-box-create-react-app/issues/865#issuecomment-252199527).
 
 These environment variables will be defined for you on `process.env`. For example, having an environment
 variable named `REACT_APP_SECRET_CODE` will be exposed in your JS as `process.env.REACT_APP_SECRET_CODE`, in addition
@@ -717,8 +717,8 @@ Create React App doesn’t support decorator syntax at the moment because:
 However in many cases you can rewrite decorator-based code without decorators just as fine.<br>
 Please refer to these two threads for reference:
 
-* [#214](https://github.com/facebookincubator/create-react-app/issues/214)
-* [#411](https://github.com/facebookincubator/create-react-app/issues/411)
+* [#214](https://github.com/facebookincubator/fuse-box-create-react-app/issues/214)
+* [#411](https://github.com/facebookincubator/fuse-box-create-react-app/issues/411)
 
 Create React App will add decorator support when the specification advances to a stable stage.
 
@@ -728,12 +728,12 @@ These tutorials will help you to integrate your app with an API backend running 
 using `fetch()` to access it.
 
 ### Node
-Check out [this tutorial](https://www.fullstackreact.com/articles/using-create-react-app-with-a-server/).
+Check out [this tutorial](https://www.fullstackreact.com/articles/using-fuse-box-create-react-app-with-a-server/).
 You can find the companion GitHub repository [here](https://github.com/fullstackreact/food-lookup-demo).
 
 ### Ruby on Rails
 
-Check out [this tutorial](https://www.fullstackreact.com/articles/how-to-get-create-react-app-to-work-with-your-rails-api/).
+Check out [this tutorial](https://www.fullstackreact.com/articles/how-to-get-fuse-box-create-react-app-to-work-with-your-rails-api/).
 You can find the companion GitHub repository [here](https://github.com/fullstackreact/food-lookup-demo-rails).
 
 ## Proxying API Requests in Development
@@ -831,7 +831,7 @@ Then, on the server, you can replace `__SERVER_DATA__` with a JSON of real data 
 ## Running Tests
 
 >Note: this feature is available with `fuse-box-react-scripts@0.3.0` and higher.<br>
->[Read the migration guide to learn how to enable it in older projects!](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md#migrating-from-023-to-030)
+>[Read the migration guide to learn how to enable it in older projects!](https://github.com/offgridnetworks/fuse-box-create-react-app/blob/master/CHANGELOG.md#migrating-from-023-to-030)
 
 Create React App uses [Jest](https://facebook.github.io/jest/) as its test runner. To prepare for this integration, we did a [major revamp](https://facebook.github.io/jest/blog/2016/09/01/jest-15.html) of Jest so if you heard bad things about it years ago, give it another try.
 
@@ -1062,7 +1062,7 @@ CI=true npm run build
 
 The test command will force Jest to run tests once instead of launching the watcher.
 
->  If you find yourself doing this often in development, please [file an issue](https://github.com/facebookincubator/create-react-app/issues/new) to tell us about your use case because we want to make watcher the best experience and are open to changing how it works to accommodate more workflows.
+>  If you find yourself doing this often in development, please [file an issue](https://github.com/facebookincubator/fuse-box-create-react-app/issues/new) to tell us about your use case because we want to make watcher the best experience and are open to changing how it works to accommodate more workflows.
 
 The build command will check for linter warnings and fail if any are found.
 
@@ -1218,7 +1218,7 @@ This will make sure that all the asset paths are relative to `index.html`. You w
 
 ### Azure
 
-See [this](https://medium.com/@to_pe/deploying-create-react-app-on-microsoft-azure-c0f6686a4321) blog post on how to deploy your React app to [Microsoft Azure](https://azure.microsoft.com/).
+See [this](https://medium.com/@to_pe/deploying-fuse-box-create-react-app-on-microsoft-azure-c0f6686a4321) blog post on how to deploy your React app to [Microsoft Azure](https://azure.microsoft.com/).
 
 ### Firebase
 
@@ -1348,7 +1348,7 @@ GitHub Pages doesn't support routers that use the HTML5 `pushState` history API 
 
 ### Heroku
 
-Use the [Heroku Buildpack for Create React App](https://github.com/mars/create-react-app-buildpack).<br>
+Use the [Heroku Buildpack for Create React App](https://github.com/mars/fuse-box-create-react-app-buildpack).<br>
 You can find instructions in [Deploying React with Zero Configuration](https://blog.heroku.com/deploying-react-with-zero-configuration).
 
 #### Resolving "Module not found: Error: Cannot resolve 'file' or 'directory'"
@@ -1400,11 +1400,11 @@ When you build the project, Create React App will place the `public` folder cont
 
 ### Now
 
-See [this example](https://github.com/xkawi/create-react-app-now) for a zero-configuration single-command deployment with [now](https://zeit.co/now).
+See [this example](https://github.com/xkawi/fuse-box-create-react-app-now) for a zero-configuration single-command deployment with [now](https://zeit.co/now).
 
 ### S3 and CloudFront
 
-See this [blog post](https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af) on how to deploy your React app to Amazon Web Services [S3](https://aws.amazon.com/s3) and [CloudFront](https://aws.amazon.com/cloudfront/).
+See this [blog post](https://medium.com/@omgwtfmarc/deploying-fuse-box-create-react-app-to-s3-or-cloudfront-48dae4ce0af) on how to deploy your React app to Amazon Web Services [S3](https://aws.amazon.com/s3) and [CloudFront](https://aws.amazon.com/cloudfront/).
 
 ### Surge
 
@@ -1415,14 +1415,14 @@ Install the Surge CLI if you haven't already by running `npm install -g surge`. 
            password: ********
        project path: /path/to/project/build
                size: 7 files, 1.8 MB
-             domain: create-react-app.surge.sh
+             domain: fuse-box-create-react-app.surge.sh
              upload: [====================] 100%, eta: 0.0s
    propagate on CDN: [====================] 100%
                plan: Free
               users: email@domain.com
          IP Address: X.X.X.X
 
-    Success! Project is published and running at create-react-app.surge.sh
+    Success! Project is published and running at fuse-box-create-react-app.surge.sh
 ```
 
 Note that in order to support routers that use HTML5 `pushState` API, you may want to rename the `index.html` in your build folder to `200.html` before deploying to Surge. This [ensures that every URL falls back to that file](https://surge.sh/help/adding-a-200-page-for-client-side-routing).
@@ -1448,16 +1448,16 @@ When you save a file while `npm start` is running, the browser should refresh wi
 If this doesn’t happen, try one of the following workarounds:
 
 * If your project is in a Dropbox folder, try moving it out.
-* If the watcher doesn’t see a file called `index.js` and you’re referencing it by the folder name, you [need to restart the watcher](https://github.com/facebookincubator/create-react-app/issues/1164) due to a Webpack bug.
-* Some editors like Vim and IntelliJ have a “safe write” feature that currently breaks the watcher. You will need to disable it. Follow the instructions in [“Working with editors supporting safe write”](https://webpack.github.io/docs/webpack-dev-server.html#working-with-editors-ides-supporting-safe-write).
-* If your project path contains parentheses, try moving the project to a path without them. This is caused by a [Webpack watcher bug](https://github.com/webpack/watchpack/issues/42).
-* On Linux and macOS, you might need to [tweak system settings](https://webpack.github.io/docs/troubleshooting.html#not-enough-watchers) to allow more watchers.
+* If the watcher doesn’t see a file called `index.js` and you’re referencing it by the folder name, you [need to restart the watcher](https://github.com/facebookincubator/fuse-box-create-react-app/issues/1164) due to a FuseBox bug.
+* Some editors like Vim and IntelliJ have a “safe write” feature that currently breaks the watcher. You will need to disable it. Follow the instructions in [“Working with editors supporting safe write”](https://FuseBox.github.io/docs/FuseBox-dev-server.html#working-with-editors-ides-supporting-safe-write).
+* If your project path contains parentheses, try moving the project to a path without them. This is caused by a [FuseBox watcher bug](https://github.com/FuseBox/watchpack/issues/42).
+* On Linux and macOS, you might need to [tweak system settings](https://FuseBox.github.io/docs/troubleshooting.html#not-enough-watchers) to allow more watchers.
 
-If none of these solutions help please leave a comment [in this thread](https://github.com/facebookincubator/create-react-app/issues/659).
+If none of these solutions help please leave a comment [in this thread](https://github.com/facebookincubator/fuse-box-create-react-app/issues/659).
 
 ### `npm test` hangs on macOS Sierra
 
-If you run `npm test` and the console gets stuck after printing `fuse-box-react-scripts test --env=jsdom` to the console there might be a problem with your [Watchman](https://facebook.github.io/watchman/) installation as described in [facebookincubator/create-react-app#713](https://github.com/facebookincubator/create-react-app/issues/713).
+If you run `npm test` and the console gets stuck after printing `fuse-box-react-scripts test --env=jsdom` to the console there might be a problem with your [Watchman](https://facebook.github.io/watchman/) installation as described in [facebookincubator/fuse-box-create-react-app#713](https://github.com/facebookincubator/fuse-box-create-react-app/issues/713).
 
 We recommend deleting `node_modules` in your project and running `npm install` (or `yarn` if you use it) first. If it doesn't help, you can try one of the numerous workarounds mentioned in these issues:
 
@@ -1481,7 +1481,7 @@ There are also reports that *uninstalling* Watchman fixes the issue. So if nothi
 
 ### `npm run build` silently fails
 
-It is reported that `npm run build` can fail on machines with no swap space, which is common in cloud environments. If [the symptoms are matching](https://github.com/facebookincubator/create-react-app/issues/1133#issuecomment-264612171), consider adding some swap space to the machine you’re building on, or build the project locally.
+It is reported that `npm run build` can fail on machines with no swap space, which is common in cloud environments. If [the symptoms are matching](https://github.com/facebookincubator/fuse-box-create-react-app/issues/1133#issuecomment-264612171), consider adding some swap space to the machine you’re building on, or build the project locally.
 
 ### `npm run build` fails on Heroku
 
@@ -1490,4 +1490,4 @@ Please refer to [this section](#resolving-module-not-found-error-cannot-resolve-
 
 ## Something Missing?
 
-If you have ideas for more “How To” recipes that should be on this page, [let us know](https://github.com/facebookincubator/create-react-app/issues) or [contribute some!](https://github.com/facebookincubator/create-react-app/edit/master/packages/fuse-box-react-scripts/template/README.md)
+If you have ideas for more “How To” recipes that should be on this page, [let us know](https://github.com/facebookincubator/fuse-box-create-react-app/issues) or [contribute some!](https://github.com/facebookincubator/fuse-box-create-react-app/edit/master/packages/fuse-box-react-scripts/template/README.md)

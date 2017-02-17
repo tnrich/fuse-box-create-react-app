@@ -135,7 +135,7 @@ function createApp(name, verbose, version, template) {
   process.chdir(root);
 
   console.log('Installing packages. This might take a couple minutes.');
-  console.log('Installing ' + chalk.cyan('fuse-box-react-scripts') + ' or equivalent...');
+  console.log('Installing ' + chalk.cyan('fuse-box-react-scripts') + '...');
   console.log();
 
   run(root, appName, version, verbose, originalDirectory, template);
