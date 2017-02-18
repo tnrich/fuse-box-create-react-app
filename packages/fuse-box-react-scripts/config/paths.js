@@ -59,9 +59,17 @@ function getPublicUrl(appPackageJson) {
   return envPublicUrl || require(appPackageJson).homepage;
 }
 
+function getPackageDirectory(appPackageJson, key) {
+  var directories = require(appPackageJson).directories;
+  if (directories && directories[key])
+    return directories[key]
+  else 
+    return key;
+}
+
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
 // "public path" at which the app is served.
-// Webpack needs to know it to put the right <script> hrefs into HTML even in
+// fuse-box-react-scripts needs to know it to put the right <script> hrefs into HTML even in
 // single-page apps that may serve index.html for nested URLs like /todos/42.
 // We can't use a relative path in HTML because we don't want to load something
 // like /todos/42/static/js/bundle.7289d.js. We have to know the root.
@@ -75,14 +83,14 @@ function getServedPath(appPackageJson) {
 
 // config after eject: we're in ./config/
 module.exports = {
-  appBuild: resolveApp('build'),
-  appPublic: resolveApp('public'),
+  appBuild: resolveApp(getPackageDirectory('build')),
+  appPublic: resolveApp(getPackageDirectory('public')),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveApp('src/index.js'),
+  appIndexJs: resolveApp(require(appPackageJson).main || path.join(getPackageDirectory('src'), 'index.js')),
   appPackageJson: resolveApp('package.json'),
-  appSrc: resolveApp('src'),
+  appSrc: resolveApp(getPackageDirectory('src')),
   yarnLockFile: resolveApp('yarn.lock'),
-  testsSetup: resolveApp('src/setupTests.js'),
+  testsSetup: resolveApp(path.join(getPackageDirectory('src'), 'setupTests.js')),
   appNodeModules: resolveApp('node_modules'),
   ownNodeModules: resolveApp('node_modules'),
   nodePaths: nodePaths,
@@ -97,23 +105,7 @@ function resolveOwn(relativePath) {
 }
 
 // config before eject: we're in ./node_modules/fuse-box-react-scripts/config/
-module.exports = {
-  appBuild: resolveApp('build'),
-  appPublic: resolveApp('public'),
-  appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveApp('src/index.js'),
-  appPackageJson: resolveApp('package.json'),
-  appSrc: resolveApp('src'),
-  yarnLockFile: resolveApp('yarn.lock'),
-  testsSetup: resolveApp('src/setupTests.js'),
-  appNodeModules: resolveApp('node_modules'),
-  // this is empty with npm3 but node resolution searches higher anyway:
-  ownNodeModules: resolveOwn('../node_modules'),
-  nodePaths: nodePaths,
-  publicUrl: getPublicUrl(resolveApp('package.json')),
-  servedPath: getServedPath(resolveApp('package.json')),
-  appDirectory: appDirectory
-};
+module.exports.ownNodeModules = resolveOwn('../node_modules');
 
 // config before publish: we're in ./packages/fuse-box-react-scripts/config/
 if (__dirname.indexOf(path.join('packages', 'fuse-box-react-scripts', 'config')) !== -1) {
