@@ -20,6 +20,7 @@ var appDirectory = fs.realpathSync(process.cwd());
 function resolveApp(relativePath) {
   return path.resolve(appDirectory, relativePath);
 }
+var packageJson = require(resolveApp('package.json'));
 
 // We support resolving modules according to `NODE_PATH`.
 // This lets you use absolute paths in imports inside large monorepos:
@@ -55,12 +56,12 @@ function ensureSlash(path, needsSlash) {
   }
 }
 
-function getPublicUrl(appPackageJson) {
-  return envPublicUrl || require(appPackageJson).homepage;
+function getPublicUrl() {
+  return envPublicUrl || packageJson.homepage;
 }
 
-function getPackageDirectory(appPackageJson, key) {
-  var directories = require(appPackageJson).directories;
+function getPackageDirectory(key) {
+  var directories = packageJson.directories;
   if (directories && directories[key])
     return directories[key]
   else 
@@ -73,8 +74,8 @@ function getPackageDirectory(appPackageJson, key) {
 // single-page apps that may serve index.html for nested URLs like /todos/42.
 // We can't use a relative path in HTML because we don't want to load something
 // like /todos/42/static/js/bundle.7289d.js. We have to know the root.
-function getServedPath(appPackageJson) {
-  var publicUrl = getPublicUrl(appPackageJson);
+function getServedPath() {
+  var publicUrl = getPublicUrl();
   var servedUrl = envPublicUrl || (
     publicUrl ? url.parse(publicUrl).pathname : '/'
   );
@@ -85,8 +86,8 @@ function getServedPath(appPackageJson) {
 module.exports = {
   appBuild: resolveApp(getPackageDirectory('build')),
   appPublic: resolveApp(getPackageDirectory('public')),
-  appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveApp(require(appPackageJson).main || path.join(getPackageDirectory('src'), 'index.js')),
+  appHtml: resolveApp(path.join(getPackageDirectory('public'), 'index.html')),
+  appIndexJs: resolveApp(packageJson.main || path.join(getPackageDirectory('src'), 'index.js')),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp(getPackageDirectory('src')),
   yarnLockFile: resolveApp('yarn.lock'),
@@ -94,8 +95,8 @@ module.exports = {
   appNodeModules: resolveApp('node_modules'),
   ownNodeModules: resolveApp('node_modules'),
   nodePaths: nodePaths,
-  publicUrl: getPublicUrl(resolveApp('package.json')),
-  servedPath: getServedPath(resolveApp('package.json')),
+  publicUrl: getPublicUrl(),
+  servedPath: getServedPath(),
   appDirectory: appDirectory
 };
 
