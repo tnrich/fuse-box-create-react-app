@@ -122,6 +122,9 @@ function createApp(name, verbose, version, template) {
   );
   console.log();
 
+  var packageToInstall = getInstallPackage(version);
+  var packageName = getPackageName(packageToInstall);
+
   var packageJson = {
     name: appName,
     version: '0.1.0',
@@ -135,10 +138,10 @@ function createApp(name, verbose, version, template) {
   process.chdir(root);
 
   console.log('Installing packages. This might take a couple minutes.');
-  console.log('Installing ' + chalk.cyan('fuse-box-react-scripts') + '...');
+  console.log('Installing ' + chalk.cyan(packageName) + '...');
   console.log();
 
-  run(root, appName, version, verbose, originalDirectory, template);
+  run(root, appName, packageToInstall, verbose, originalDirectory, template);
 }
 
 function shouldUseYarn() {
@@ -171,8 +174,8 @@ function install(packageToInstall, verbose, callback) {
   });
 }
 
-function run(root, appName, version, verbose, originalDirectory, template) {
-  var packageToInstall = getInstallPackage(version);
+function run(root, appName, packageToInstall, verbose, originalDirectory, template) {
+
   var packageName = getPackageName(packageToInstall);
 
   install(packageToInstall, verbose, function(code, command, args) {
