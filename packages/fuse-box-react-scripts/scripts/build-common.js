@@ -95,7 +95,7 @@ exports.copyHTMLFile = function copyHTMLFile() {
         var content = fs
             .readFileSync(file, 'utf8')
             .replace(/%PUBLIC_URL%/g, publicUrl.replace(/\/$/, ''))
-            .replace(/<\/body>/g, '<script type="text/javascript" src="./static/js/' + bundleFile + '"></script></body>')
+            .replace(/<\/body>/g, '<script type="text/javascript" src="/static/js/' + bundleFile + '"></script></body>')
 
         fs.writeFileSync(path.join(paths.appBuild, path.basename(file)), content);
     });
