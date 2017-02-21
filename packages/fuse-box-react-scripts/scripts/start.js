@@ -22,6 +22,7 @@ require('dotenv').config({ silent: true });
 
 const fsbx = require("fuse-box");
 const FuseBox = fsbx.FuseBox;
+var express = require('express');
 
 var chalk = require('chalk');
 var detect = require('detect-port');
@@ -71,9 +72,13 @@ function runDevServer(host, port, protocol) {
   const fusebox = buildcommon.initBuilderDev();
 
   try {
-    fusebox.devServer(">index.js", {
+    var server = fusebox.devServer('>index.js', {
       port: port,
       root: paths.appBuild
+    });
+    server.httpServer.app.use(express.static(paths.appBuild));
+    server.httpServer.app.get('*', function(req, res) {
+      res.sendFile(path.join(paths.appBuild, 'index.html'));
     });
   } catch (err) {
     printErrors('Failed during development hosting', [err]);
