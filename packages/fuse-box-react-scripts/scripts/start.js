@@ -11,9 +11,8 @@
 // @remove-on-eject-end
 
  var process = require('process');
-
-// Do not set NODE_ENV as set in FuseBox config and development confuses these Babel presets
-// process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = "development";
+process.env.BABEL_ENV = 'production';
 
 // Load environment variables from .env file. Suppress warnings using silent
 // if this file is missing. dotenv will never modify any environment variables
