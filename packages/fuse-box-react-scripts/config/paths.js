@@ -85,6 +85,7 @@ function getServedPath() {
 // config after eject: we're in ./config/
 module.exports = {
   appBuild: resolveApp(getPackageDirectory('build')),
+  appConfig: resolveApp(getPackageDirectory('config')),
   appPublic: resolveApp(getPackageDirectory('public')),
   appHtml: resolveApp(path.join(getPackageDirectory('public'), 'index.html')),
   appIndexJs: resolveApp(packageJson.main || path.join(getPackageDirectory('src'), 'index.js')),
@@ -108,23 +109,4 @@ function resolveOwn(relativePath) {
 // config before eject: we're in ./node_modules/fuse-box-react-scripts/config/
 module.exports.ownNodeModules = resolveOwn('../node_modules');
 
-// config before publish: we're in ./packages/fuse-box-react-scripts/config/
-if (__dirname.indexOf(path.join('packages', 'fuse-box-react-scripts', 'config')) !== -1) {
-  module.exports = {
-    appBuild: resolveOwn('../../../build'),
-    appPublic: resolveOwn('../template/public'),
-    appHtml: resolveOwn('../template/public/index.html'),
-    appIndexJs: resolveOwn('../template/src/index.js'),
-    appPackageJson: resolveOwn('../package.json'),
-    appSrc: resolveOwn('../template/src'),
-    yarnLockFile: resolveOwn('../template/yarn.lock'),
-    testsSetup: resolveOwn('../template/src/setupTests.js'),
-    appNodeModules: resolveOwn('../node_modules'),
-    ownNodeModules: resolveOwn('../node_modules'),
-    nodePaths: nodePaths,
-    publicUrl: getPublicUrl(resolveOwn('../package.json')),
-    servedPath: getServedPath(resolveOwn('../package.json')),
-    appDirectory: appDirectory
-  };
-}
 // @remove-on-eject-end

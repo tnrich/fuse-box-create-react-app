@@ -28,7 +28,8 @@ module.exports = function(appPath, appName, verbose, originalDirectory, template
     'start': 'fuse-box-react-scripts start',
     'build': 'fuse-box-react-scripts build',
     'test': 'fuse-box-react-scripts test --env=jsdom',
-    'eject': 'fuse-box-react-scripts eject'
+    'eject': 'fuse-box-react-scripts eject',
+    'ejectconfig': 'fuse-box-react-scripts ejectconfig'
   };
 
   fs.writeFileSync(

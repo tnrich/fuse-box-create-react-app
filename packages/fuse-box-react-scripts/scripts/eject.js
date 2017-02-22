@@ -30,7 +30,7 @@ prompt(
   console.log('Ejecting...');
 
   var ownPath = path.join(__dirname, '..');
-  var appPath = path.join(ownPath, '..', '..');
+  var appPath = fs.realpathSync(process.cwd());
 
   function verifyAbsent(file) {
     if (fs.existsSync(path.join(appPath, file))) {
@@ -55,6 +55,8 @@ prompt(
     path.join('config', 'polyfills.js'),
     path.join('config', 'jest', 'cssTransform.js'),
     path.join('config', 'jest', 'fileTransform.js'),
+    path.join('config', 'fuse.config.dev.js'),
+    path.join('config', 'fuse.config.prod.js'),
     path.join('scripts', 'build.js'),
     path.join('scripts', 'start.js'),
     path.join('scripts', 'test.js'),
@@ -112,6 +114,7 @@ prompt(
   console.log();
   console.log(cyan('Updating the scripts'));
   delete appPackage.scripts['eject'];
+  delete appPackage.scripts['ejectconfig'];
   Object.keys(appPackage.scripts).forEach(function (key) {
     appPackage.scripts[key] = appPackage.scripts[key]
       .replace(/fuse-box-react-scripts (\w+)/g, 'node scripts/$1.js')

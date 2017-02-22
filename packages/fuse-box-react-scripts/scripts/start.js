@@ -10,9 +10,10 @@
  */
 // @remove-on-eject-end
 
-// Do this as the first thing so that any code reading it knows the right env.
-var process = require('process');
-process.env.NODE_ENV = 'production';
+ var process = require('process');
+
+// Do not set NODE_ENV as set in FuseBox config and development confuses these Babel presets
+// process.env.NODE_ENV = 'production';
 
 // Load environment variables from .env file. Suppress warnings using silent
 // if this file is missing. dotenv will never modify any environment variables
@@ -69,7 +70,7 @@ function runDevServer(host, port, protocol) {
   fs.emptyDirSync(paths.appBuild);
 
 
-  const fusebox = buildcommon.initBuilderDev();
+  const fusebox = buildcommon.initBuilder();
 
   try {
     var server = fusebox.devServer('>index.js', {
@@ -128,21 +129,10 @@ detect(DEFAULT_PORT).then(port => {
   }
 });
 
-
-// fusebox.devServer(">index.js", { port: 7775	});
-
 var useYarn = fs.existsSync(paths.yarnLockFile);
 
 // Warn and crash if required files are missing
 if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
   process.exit(1);
 }
-
-
-// NOT CURRENTLY USED AS WE POINT DEVSERVER ROOT DIRECTORY DIRECTLY TO PUBLIC
-function copyStaticFolder() {
-  fs.copySync(paths.appPublic, paths.appBuild, {
-    dereference: true,
-    filter: file => file !== paths.appHtml
-  });
-}
+    

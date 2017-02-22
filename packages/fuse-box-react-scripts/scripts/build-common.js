@@ -18,64 +18,17 @@ const paths = require('../config/paths'),
 
 const bundleFile = 'bundle.js';
 
-exports.initBuilder = function initBuilder() {
-    return FuseBox.init({
-        homeDir: paths.appSrc,
-        sourceMap: {
-            bundleReference: "sourcemaps.js.map",
-            outFile: path.join(paths.appBuild, "static", "js", "sourcemaps.js.map"),
-        },
-        outFile: path.join(paths.appBuild, "static", "js", bundleFile),
-        plugins: [
-             fsbx.EnvPlugin({
-            'NODE_ENV': JSON.stringify('production')
-        }),
-            fsbx.SVGPlugin(),
-            fsbx.CSSPlugin(),
-            fsbx.HTMLPlugin({ useDefault: false }),
-            fsbx.BabelPlugin({
-                config: {
-                    sourceMaps: true,
-                    presets: ['react-app']
-                }
-            }),
-            fsbx.UglifyJSPlugin({
-                compress: {
-                    screw_ie8: true, // React doesn't support IE8
-                    warnings: true
-                },
-                mangle: {
-                    screw_ie8: true
-                },
-                output: {
-                    comments: false,
-                    screw_ie8: true
-                }
-            })
-        ]
-    });
-}
+exports.initBuilder = function() {
 
-exports.initBuilderDev = function initBuilderDev() {
-    console.log(">>>>  " + bundleFile);
-    return FuseBox.init({
-        homeDir: paths.appSrc,
-        outFile: path.join(paths.appBuild, "static", "js", bundleFile),
-        plugins: [
-            fsbx.EnvPlugin({
-            'NODE_ENV': JSON.stringify('development')
-        }),
-            fsbx.SVGPlugin(),
-            fsbx.CSSPlugin(),
-            fsbx.HTMLPlugin({ useDefault: false }),
-            fsbx.BabelPlugin({
-                config: {
-                    sourceMaps: true,
-                    presets: ['react-app']
-                }
-            })
-        ]
-    });
+    var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
+    var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
+ 
+     // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
+    if (fs.existsSync(path.join(paths.appConfig, fuseConfigFile)))
+      fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
+ 
+     var fuseConfig = require(fuseConfigPath);
+    return fuseConfig.initBuilder(paths, bundleFile);
 }
 
 exports.copyStaticFolder = function copyStaticFolder() {
