@@ -51,7 +51,7 @@ function build() {
   console.log('Creating an optimized production build...');
 
   return buildcommon.initBuilder()
-    .bundle(">index.js **/*.html")
+    .bundle(">index.js **/*.jsx **/*.json +node_modules/**/*.js")
     .then(function (val) {
       if (val) {
         console.log(chalk.green('Compiled successfully.'));

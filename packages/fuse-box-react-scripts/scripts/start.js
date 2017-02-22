@@ -72,7 +72,7 @@ function runDevServer(host, port, protocol) {
   const fusebox = buildcommon.initBuilder();
 
   try {
-    var server = fusebox.devServer('>index.js', {
+    var server = fusebox.devServer('>index.js **/*.jsx **/*.json +node_modules/**/*.js', {
       port: port,
       root: paths.appBuild
     });

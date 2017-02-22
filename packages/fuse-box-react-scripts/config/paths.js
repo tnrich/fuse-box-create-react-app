@@ -60,12 +60,12 @@ function getPublicUrl() {
   return envPublicUrl || packageJson.homepage;
 }
 
-function getPackageDirectory(key) {
+function getPackageDirectory(key, defaultdir) {
   var directories = packageJson.directories;
   if (directories && directories[key])
     return directories[key]
   else 
-    return key;
+    return defaultdir || key;
 }
 
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
@@ -85,6 +85,7 @@ function getServedPath() {
 // config after eject: we're in ./config/
 module.exports = {
   appBuild: resolveApp(getPackageDirectory('build')),
+  appBundle: resolveApp(getPackageDirectory('bundle', path.join('build', 'static' ,'js'))),
   appConfig: resolveApp(getPackageDirectory('config')),
   appPublic: resolveApp(getPackageDirectory('public')),
   appHtml: resolveApp(path.join(getPackageDirectory('public'), 'index.html')),

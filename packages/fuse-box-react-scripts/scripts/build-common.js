@@ -18,16 +18,16 @@ const paths = require('../config/paths'),
 
 const bundleFile = 'bundle.js';
 
-exports.initBuilder = function() {
+exports.initBuilder = function () {
 
     var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
     var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
- 
-     // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
+
+    // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
     if (fs.existsSync(path.join(paths.appConfig, fuseConfigFile)))
-      fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
- 
-     var fuseConfig = require(fuseConfigPath);
+        fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
+
+    var fuseConfig = require(fuseConfigPath);
     return fuseConfig.initBuilder(paths, bundleFile);
 }
 
@@ -42,14 +42,14 @@ exports.copyStaticFolder = function copyStaticFolder() {
 
 exports.copyHTMLFile = function copyHTMLFile() {
     var publicUrl = paths.publicUrl || "/";
+    var relativeBundle = '/' + path.relative(paths.appBuild, path.join(paths.appBundle, bundleFile)).replace(path.sep, '/');
 
     [paths.appHtml].forEach(function (file) {
         console.log('  Copying ' + chalk.cyan(path.relative(paths.appDirectory, file)) + ' to the build folder');
         var content = fs
             .readFileSync(file, 'utf8')
             .replace(/%PUBLIC_URL%/g, publicUrl.replace(/\/$/, ''))
-            .replace(/<\/body>/g, '<script type="text/javascript" src="/static/js/' + bundleFile + '"></script></body>')
-
+            .replace(/<\/body>/g, '<script type="text/javascript" src="' + relativeBundle + '"></script></body>')
         fs.writeFileSync(path.join(paths.appBuild, path.basename(file)), content);
     });
     console.log();

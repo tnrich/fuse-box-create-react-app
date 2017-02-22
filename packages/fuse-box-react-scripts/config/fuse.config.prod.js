@@ -18,9 +18,9 @@ exports.initBuilder = function initBuilderProd(paths, bundleFile) {
         homeDir: paths.appSrc,
         sourceMap: {
             bundleReference: "sourcemaps.js.map",
-            outFile: path.join(paths.appBuild, "static", "js", "sourcemaps.js.map"),
+            outFile: path.join(paths.appBundle, "sourcemaps.js.map"),
         },
-        outFile: path.join(paths.appBuild, "static", "js", bundleFile),
+        outFile: path.join(paths.appBundle, bundleFile),
         plugins: [
              fsbx.EnvPlugin({
             "NODE_ENV":  process.env.NODE_ENV

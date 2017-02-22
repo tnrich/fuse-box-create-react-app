@@ -16,7 +16,7 @@ const fsbx = require("fuse-box"),
 exports.initBuilder = function initBuilderDev(paths, bundleFile) {
     return FuseBox.init({
         homeDir: paths.appSrc,
-        outFile: path.join(paths.appBuild, "static", "js", bundleFile),
+        outFile: path.join(paths.appBundle, bundleFile),
         plugins: [
             fsbx.EnvPlugin({
                 "NODE_ENV": process.env.NODE_ENV
