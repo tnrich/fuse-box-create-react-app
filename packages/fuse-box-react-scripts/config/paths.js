@@ -68,6 +68,19 @@ function getPackageDirectory(key, defaultdir) {
     return defaultdir || key;
 }
 
+function getPackageDirectoryLast(key, defaultdir) {
+  var directories = packageJson.directories;
+  if (directories && directories[key])
+  {
+    if (Array.isArray(directories[key]))
+      return directories[key][directories[key].length-1]
+    else
+      return directories[key]
+  }
+  else 
+    return defaultdir || key;
+}
+
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
 // "public path" at which the app is served.
 // fuse-box-react-scripts needs to know it to put the right <script> hrefs into HTML even in
@@ -82,13 +95,26 @@ function getServedPath() {
   return ensureSlash(servedUrl, true);
 }
 
+function resolveAppArray(pathitem) {
+
+  if (Array.isArray(pathitem)) { 
+    var result = [];
+    pathitem.forEach(function(item){
+      result.push(resolveApp(item));
+    });
+    return result;
+  }
+
+  return resolveApp(pathitem);
+}
+
 // config after eject: we're in ./config/
 module.exports = {
   appBuild: resolveApp(getPackageDirectory('build')),
   appBundle: resolveApp(getPackageDirectory('bundle', path.join('build', 'static' ,'js'))),
   appConfig: resolveApp(getPackageDirectory('config')),
-  appPublic: resolveApp(getPackageDirectory('public')),
-  appHtml: resolveApp(path.join(getPackageDirectory('public'), 'index.html')),
+  appPublic: resolveAppArray(getPackageDirectory('public')),
+  appHtml: resolveApp(path.join(getPackageDirectoryLast('public'), 'index.html')),
   appIndexJs: resolveApp(packageJson.main || path.join(getPackageDirectory('src'), 'index.js')),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp(getPackageDirectory('src')),

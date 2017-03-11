@@ -32,10 +32,20 @@ exports.initBuilder = function () {
 }
 
 exports.copyStaticFolder = function copyStaticFolder() {
-    fs.copySync(paths.appPublic, paths.appBuild, {
-        dereference: true,
-        filter: file => file !== paths.appHtml
-    });
+    if (Array.isArray(paths.appPublic)) {
+        paths.appPublic.forEach(function (pathPublic) {
+            fs.copySync(pathPublic, paths.appBuild, {
+                dereference: true,
+                filter: file => file !== paths.appHtml
+            });
+        })
+    } else {
+        fs.copySync(paths.appPublic, paths.appBuild, {
+            dereference: true,
+            filter: file => file !== paths.appHtml
+        });
+    }
+
     console.log(chalk.green('Copied static assets.'));
     console.log();
 }
