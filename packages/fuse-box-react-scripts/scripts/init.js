@@ -19,8 +19,6 @@ module.exports = function(appPath, appName, verbose, originalDirectory, template
   var appPackage = require(path.join(appPath, 'package.json'));
   var useYarn = fs.existsSync(path.join(appPath, 'yarn.lock'));
 
-  console.log(JSON.stringify(appPackage));
-
   // Copy over some of the devDependencies
   appPackage.dependencies = appPackage.dependencies || {};
   appPackage.devDependencies = appPackage.devDependencies || {};
