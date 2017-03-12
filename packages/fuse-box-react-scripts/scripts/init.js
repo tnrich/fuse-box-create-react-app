@@ -84,7 +84,10 @@ module.exports = function(appPath, appName, verbose, originalDirectory, template
   if (fs.existsSync(templatePackagePath)) {
     var mergePackage = require(templatePackagePath);
 
-    Object.assign(appPackage, mergePackage);
+    Object.keys(mergePackage).forEach(function(key){
+      appPackage[key] = appPackage[key] || {};
+      Object.assign(appPackage[key], mergePackage[key]);
+    })
 
     fs.writeFileSync(
       path.join(appPath, 'package.json'),
