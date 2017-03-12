@@ -68,6 +68,7 @@ module.exports = function(appPath, appName, verbose, originalDirectory, template
 
    // update bower.json
   var bowerPackagePath = require(path.join(appPath, 'bower.json'));
+  console.log("Updating " + chalk.cyan(bowerPackagePath));
   if (fs.existsSync(bowerPackagePath)) {
     var bowerPackage = require(bowerPackagePath);
     bowerPackage.name = appPackage.name;
@@ -75,7 +76,7 @@ module.exports = function(appPath, appName, verbose, originalDirectory, template
 
     fs.writeFileSync(
       path.join(bowerPackagePath),
-      JSON.stringify(appPackage, null, 2)
+      JSON.stringify(bowerPackage, null, 2)
     );
   }
 
