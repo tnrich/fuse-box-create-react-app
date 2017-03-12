@@ -141,7 +141,7 @@ module.exports = function (appPath, appName, verbose, originalDirectory, templat
       command = 'npm';
       args = [
         'install',
-        '--dev',
+        '--only-dev',
         verbose && '--verbose'
       ].filter(function (e) { return e; });
     }
