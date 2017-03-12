@@ -19,6 +19,8 @@ module.exports = function(appPath, appName, verbose, originalDirectory, template
   var appPackage = require(path.join(appPath, 'package.json'));
   var useYarn = fs.existsSync(path.join(appPath, 'yarn.lock'));
 
+  console.log(JSON.stringify(appPackage));
+
   // Copy over some of the devDependencies
   appPackage.dependencies = appPackage.dependencies || {};
   appPackage.devDependencies = appPackage.devDependencies || {};
@@ -67,7 +69,7 @@ module.exports = function(appPath, appName, verbose, originalDirectory, template
   });
 
    // update bower.json
-  var bowerPackagePath = require(path.join(appPath, 'bower.json'));
+  var bowerPackagePath = path.join(appPath, 'bower.json');
   console.log("Updating " + chalk.cyan(bowerPackagePath));
   if (fs.existsSync(bowerPackagePath)) {
     var bowerPackage = require(bowerPackagePath);
