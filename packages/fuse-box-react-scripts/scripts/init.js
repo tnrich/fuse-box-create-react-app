@@ -66,6 +66,33 @@ module.exports = function(appPath, appName, verbose, originalDirectory, template
     }
   });
 
+   // update bower.json
+  var bowerPackagePath = require(path.join(appPath, 'bower.json'));
+  if (fs.existsSync(bowerPackagePath)) {
+    var bowerPackage = require(bowerPackagePath);
+    bowerPackage.name = appPackage.name;
+    bowerPackage.version = appPackage.version;
+
+    fs.writeFileSync(
+      path.join(bowerPackagePath),
+      JSON.stringify(appPackage, null, 2)
+    );
+  }
+
+  // Install additional package json entries dependencies, if present
+  var templatePackagePath = path.join(appPath, '.template.package.json');
+  if (fs.existsSync(templatePackagePath)) {
+    var mergePackage = require(templatePackagePath);
+
+    Object.assign(appPackage, mergePackage);
+
+    fs.writeFileSync(
+      path.join(appPath, 'package.json'),
+      JSON.stringify(appPackage, null, 2)
+    );
+    fs.unlinkSync(templatePackagePath);
+  }
+
   // Run yarn or npm for react and react-dom
   // TODO: having to do two npm/yarn installs is bad, can we avoid it?
   var command;
