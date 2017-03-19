@@ -62,6 +62,8 @@ var semver = require('semver');
 
 var projectName;
 
+var defaultTemplate = process.env.REACT_SCRIPTS_TEMPLATE;
+
 var program = commander
   .version(require('./package.json').version)
   .arguments('<project-directory>')
@@ -71,6 +73,7 @@ var program = commander
   })
   .option('--verbose', 'print additional logs')
   .option('--scripts-version <alternative-package>', 'use a non-standard version of fuse-box-react-scripts')
+  .option('--template <npm-or-git-path-to-template>', 'use a non-standard version of template')
   .allowUnknownOption()
   .on('--help', function () {
     console.log('    Only ' + chalk.green('<project-directory>') + ' is required.');
@@ -98,12 +101,7 @@ if (typeof projectName === 'undefined') {
   process.exit(1);
 }
 
-var hiddenProgram = new commander.Command()
-  .option('--internal-testing-template <path-to-template>', '(internal usage only, DO NOT RELY ON THIS) ' +
-    'use a non-standard application template')
-  .parse(process.argv)
-
-createApp(projectName, program.verbose, program.scriptsVersion, hiddenProgram.internalTestingTemplate);
+createApp(projectName, program.verbose, program.scriptsVersion, program.template);
 
 function createApp(name, verbose, version, template) {
   var root = path.resolve(name);
@@ -141,12 +139,12 @@ function createApp(name, verbose, version, template) {
   console.log('Installing ' + chalk.cyan(packageName) + '...');
   console.log();
 
-  run(root, appName, packageToInstall, verbose, originalDirectory, template);
+  prerun(root, appName, packageToInstall, verbose, originalDirectory, template || defaultTemplate);
 }
 
 function shouldUseYarn() {
   try {
-    execSync('yarnpkg --version', {stdio: 'ignore'});
+    execSync('yarnpkg --version', { stdio: 'ignore' });
     return true;
   } catch (e) {
     return false;
@@ -158,7 +156,7 @@ function install(packageToInstall, verbose, callback) {
   var args;
   if (shouldUseYarn()) {
     command = 'yarnpkg';
-    args = [ 'add', '--dev', '--exact', packageToInstall];
+    args = ['add', '--dev', '--exact', packageToInstall];
   } else {
     command = 'npm';
     args = ['install', '--save-dev', '--save-exact', packageToInstall];
@@ -168,17 +166,67 @@ function install(packageToInstall, verbose, callback) {
     args.push('--verbose');
   }
 
-  var child = spawn(command, args, {stdio: 'inherit'});
-  child.on('close', function(code) {
+  var child = spawn(command, args, { stdio: 'inherit' });
+  console.log(command + " " + args.join(" "));
+  child.on('close', function (code) {
     callback(code, command, args);
   });
+}
+
+function prerun(root, appName, packageToInstall, verbose, originalDirectory, template) {
+
+  if (template) {
+
+    console.log('Installing ' + chalk.cyan(template) + '...');
+
+    install(template, verbose, function (code, command, args) {
+      if (code !== 0) {
+        console.error(chalk.cyan(command + ' ' + args.join(' ')) + ' failed');
+        process.exit(1);
+      }
+
+      var packagePath = path.resolve(
+        process.cwd(),
+        'package.json'
+      );
+
+      var packageJson = require(packagePath);
+      var templatePackage = Object.keys(require(packagePath).devDependencies)[0];
+
+      // rewrite without devDependencies
+      delete packageJson["devDependencies"];
+ 
+      fs.writeFileSync(
+        path.join(packagePath),
+        JSON.stringify(packageJson, null, 2)
+      );
+
+      // do not cache as we will be adding to package.json
+      delete require.cache[require.resolve(packagePath)];
+
+      var pathToTemplate = path.relative(originalDirectory, path.resolve(
+        process.cwd(),
+        'node_modules',
+        templatePackage,
+        'template'
+      ));
+
+      console.log("Installed " + chalk.cyan(templatePackage) + '.');
+      console.log();
+
+      run(root, appName, packageToInstall, verbose, originalDirectory, pathToTemplate);
+    })
+  }
+  else
+    run(root, appName, packageToInstall, verbose, originalDirectory);
+
 }
 
 function run(root, appName, packageToInstall, verbose, originalDirectory, template) {
 
   var packageName = getPackageName(packageToInstall);
 
-  install(packageToInstall, verbose, function(code, command, args) {
+  install(packageToInstall, verbose, function (code, command, args) {
     if (code !== 0) {
       console.error(chalk.cyan(command + ' ' + args.join(' ')) + ' failed');
       process.exit(1);
@@ -262,7 +310,7 @@ function checkAppName(appName) {
         'Due to the way npm works, the following names are not allowed:\n\n'
       ) +
       chalk.cyan(
-        allDependencies.map(function(depName) {
+        allDependencies.map(function (depName) {
           return '  ' + depName;
         }).join('\n')
       ) +
@@ -280,7 +328,7 @@ function isSafeToCreateProjectIn(root) {
     '.DS_Store', 'Thumbs.db', '.git', '.gitignore', '.idea', 'README.md', 'LICENSE'
   ];
   return fs.readdirSync(root)
-    .every(function(file) {
+    .every(function (file) {
       return validFiles.indexOf(file) >= 0;
     });
 }
