@@ -16,7 +16,12 @@ const paths = require('../config/paths'),
     fs = require('fs-extra'),
     chalk = require('chalk');
 
-const bundleFile = 'bundle.js';
+var nonce = 'xxxxxxxx-xxxx-4xxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+})
+
+const bundleFile = 'bundle-' + nonce + '.js';
 
 exports.initBuilder = function () {
 
