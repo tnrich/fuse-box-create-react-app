@@ -68,7 +68,7 @@ function printErrors(summary, errors) {
 }
 
 // Primary Build function for Create-React-App
-function buildApp(options) {
+function buildApp(port) {
 
   buildcommon.copyStaticFolder();
 
