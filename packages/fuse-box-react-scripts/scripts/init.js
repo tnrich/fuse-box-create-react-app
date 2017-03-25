@@ -67,18 +67,20 @@ module.exports = function (appPath, appName, verbose, originalDirectory, templat
   });
 
   // Rename npmignore after the fact
-  fs.move(path.join(appPath, 'npmignore'), path.join(appPath, '.npmignore'), [], function (err) {
-    if (err) {
-      // Append if there's already a `.npmignore` file there
-      if (err.code === 'EEXIST') {
-        var data = fs.readFileSync(path.join(appPath, 'npmignore'));
-        fs.appendFileSync(path.join(appPath, '.npmignore'), data);
-        fs.unlinkSync(path.join(appPath, 'npmignore'));
-      } else {
-        throw err;
+  if (fs.existsSync(bowerPackagePath)) {
+    fs.move(path.join(appPath, 'npmignore'), path.join(appPath, '.npmignore'), [], function (err) {
+      if (err) {
+        // Append if there's already a `.npmignore` file there
+        if (err.code === 'EEXIST') {
+          var data = fs.readFileSync(path.join(appPath, 'npmignore'));
+          fs.appendFileSync(path.join(appPath, '.npmignore'), data);
+          fs.unlinkSync(path.join(appPath, 'npmignore'));
+        } else {
+          throw err;
+        }
       }
-    }
-  });
+    });
+  }
 
   // update bower.json
   var bowerPackagePath = path.join(appPath, 'bower.json');
