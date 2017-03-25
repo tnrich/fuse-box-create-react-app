@@ -67,7 +67,7 @@ module.exports = function (appPath, appName, verbose, originalDirectory, templat
   });
 
   // Rename npmignore after the fact
-  if (fs.existsSync(bowerPackagePath)) {
+  if (fs.existsSync(path.join(appPath, 'npmignore'))) {
     fs.move(path.join(appPath, 'npmignore'), path.join(appPath, '.npmignore'), [], function (err) {
       if (err) {
         // Append if there's already a `.npmignore` file there
