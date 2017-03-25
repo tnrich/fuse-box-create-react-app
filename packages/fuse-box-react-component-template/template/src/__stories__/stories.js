@@ -8,7 +8,7 @@ import { ComponentA } from '~/index';
 
 storiesOf('About', module)
   .add('Introduction', () => (
-    <About showApp={linkTo('ComponentA')} />
+    <About showApp={linkTo('ComponentA', 'Default')} />
   ));
 
 storiesOf('ComponentA', module)
