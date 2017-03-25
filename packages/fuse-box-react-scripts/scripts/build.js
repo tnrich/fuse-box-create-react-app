@@ -167,7 +167,7 @@ function build() {
           } else {
             console.log('  ' + chalk.cyan('npm') + ' install -g pushstate-server');
           }
-          console.log('  ' + chalk.cyan('pushstate-server') + paths.appStoriesJs ? paths.appStoriesBuild : paths.appBuild);
+          console.log('  ' + chalk.cyan('pushstate-server') + ' build');
           console.log('  ' + chalk.cyan(openCommand) + ' http://localhost:9000');
           console.log();
         }
