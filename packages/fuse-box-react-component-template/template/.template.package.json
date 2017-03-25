@@ -1,5 +1,5 @@
 {
-  "dependencies": {
+  "devDependencies": {
     "@kadira/storybook": "^2.35.3"
   },
   "directories": {
