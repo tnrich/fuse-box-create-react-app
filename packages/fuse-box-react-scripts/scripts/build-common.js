@@ -21,9 +21,12 @@ var nonce = 'xxxxxxxx-xxxx-4xxx'.replace(/[xy]/g, function (c) {
     return v.toString(16);
 })
 
-const bundleFile = 'bundle-' + nonce + '.js';
+const bundleSuffix = '-' + nonce + '.js';
+const BUNDLE = 'bundle'
 
-exports.initBuilder = function () {
+exports.initBuilder = function (bundlePrefix, srcDir, targetDir, nononce) {
+
+    var bundleFile = nononce ? (bundlePrefix + '.js') : (bundlePrefix || BUNDLE) + bundleSuffix
 
     var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
     var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
@@ -33,39 +36,88 @@ exports.initBuilder = function () {
         fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
 
     var fuseConfig = require(fuseConfigPath);
-    return fuseConfig.initBuilder(paths, bundleFile);
+    return fuseConfig.initBuilder(paths, bundleFile, srcDir, targetDir);
 }
 
-exports.copyStaticFolder = function copyStaticFolder() {
+exports.copyStaticFolder = function copyStaticFolder(htmlBundleMap, targetDir) {
+
+    htmlBundleMap = htmlBundleMap || { 'index.html': BUNDLE };
+    targetDir = targetDir || paths.appBuild;
+
+    fs.ensureDirSync(targetDir);
+
+    var excludingPaths = Object.keys(htmlBundleMap).map(function (key) { return paths.appHtml(key) })
+
     if (Array.isArray(paths.appPublic)) {
         paths.appPublic.forEach(function (pathPublic) {
-            fs.copySync(pathPublic, paths.appBuild, {
+            fs.copySync(pathPublic, targetDir, {
                 dereference: true,
-                filter: file => file !== paths.appHtml
+                filter: file => !(excludingPaths.includes(file))
             });
         })
     } else {
-        fs.copySync(paths.appPublic, paths.appBuild, {
+        fs.copySync(paths.appPublic, targetDir, {
             dereference: true,
-            filter: file => file !== paths.appHtml
+            filter: file => !(excludingPaths.includes(file))
         });
     }
+
+    copyHTMLFiles_(htmlBundleMap, targetDir);
 
     console.log(chalk.green('Copied static assets.'));
     console.log();
 }
 
-exports.copyHTMLFile = function copyHTMLFile() {
-    var publicUrl = paths.publicUrl || "/";
-    var relativeBundle = '/' + path.relative(paths.appBuild, path.join(paths.appBundle, bundleFile)).replace(path.sep, '/');
+function copyHTMLFiles_(htmlBundleMap, targetDir) {
+    targetDir = targetDir || paths.appBuild;
 
-    [paths.appHtml].forEach(function (file) {
-        console.log('  Copying ' + chalk.cyan(path.relative(paths.appDirectory, file)) + ' to the build folder');
+    var publicUrl = paths.publicUrl || "/";
+
+    Object.keys(htmlBundleMap).forEach(function (file) {
+        var bundlePrefix = htmlBundleMap[file];
+        var relativeBundle = '/' + path.join(paths.Bundle, bundlePrefix + bundleSuffix).replace(path.sep, '/');
+        console.log('  Copying ' + chalk.cyan(file) + ' to the build folder');
         var content = fs
-            .readFileSync(file, 'utf8')
+            .readFileSync(paths.appHtml(file), 'utf8')
             .replace(/%PUBLIC_URL%/g, publicUrl.replace(/\/$/, ''))
             .replace(/<\/body>/g, '<script type="text/javascript" src="' + relativeBundle + '"></script></body>')
-        fs.writeFileSync(path.join(paths.appBuild, path.basename(file)), content);
+        fs.writeFileSync(path.join(targetDir, file), content);
     });
     console.log();
+}
+
+if (!Array.prototype.includes) {
+    Object.defineProperty(Array.prototype, 'includes', {
+        value: function (searchElement, fromIndex) {
+
+            if (this == null) {
+                throw new TypeError('"this" is null or not defined');
+            }
+
+            var o = Object(this);
+
+            var len = o.length >>> 0;
+
+            if (len === 0) {
+                return false;
+            }
+
+            var n = fromIndex | 0;
+
+            var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+            function sameValueZero(x, y) {
+                return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y));
+            }
+
+            while (k < len) {
+                if (sameValueZero(o[k], searchElement)) {
+                    return true;
+                }
+                k++;
+            }
+
+            return false;
+        }
+    });
 }

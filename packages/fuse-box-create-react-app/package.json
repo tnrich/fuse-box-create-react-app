@@ -4,21 +4,24 @@
   "keywords": [
     "react"
   ],
-  "description": "Create React apps with no build configuration, with fuse-box.",
+  "description": "Create React apps and components with no build configuration, with fuse-box.",
   "repository": "offgridnetworks/fuse-box-create-react-app",
   "license": "BSD-3-Clause",
   "engines": {
     "node": ">=6"
   },
   "bugs": {
-    "url": "https://github.com/facebookincubator/create-react-app/issues"
+    "url": "https://github.com/offgridnetworks/fuse-box-create-react-app/issues"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "component.js"
   ],
   "bin": {
     "create-react-app": "./index.js",
-    "fuse-box-create-react-app": "./index.js"
+    "fuse-box-create-react-app": "./index.js",
+    "create-react-component": "./component.js",
+    "fuse-box-create-react-component": "./component.js"
   },
   "dependencies": {
     "chalk": "^1.1.1",

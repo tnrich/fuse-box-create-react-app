@@ -85,7 +85,7 @@ var program = commander
     console.log('    It is not needed unless you specifically want to use a fork.');
     console.log();
     console.log('    If you have any problems, do not hesitate to file an issue:');
-    console.log('      ' + chalk.cyan('https://github.com/facebookincubator/create-react-app/issues/new'));
+    console.log('      ' + chalk.cyan('https://github.com/offgridnetworks/fuse-box-create-react-app/issues/new'));
     console.log();
   })
   .parse(process.argv);
@@ -195,7 +195,7 @@ function prerun(root, appName, packageToInstall, verbose, originalDirectory, tem
 
       // rewrite without devDependencies
       delete packageJson["devDependencies"];
- 
+
       fs.writeFileSync(
         path.join(packagePath),
         JSON.stringify(packageJson, null, 2)

@@ -1,0 +1,15 @@
+{
+  "name": "fuse-box-react-component-template",
+  "version": "1.0.0",
+  "keywords": [
+    "react",
+    "fuse-box"
+  ],
+  "description": "Create React components with no build configuration, with fuse-box.",
+  "repository": "offgridnetworks/fuse-box-react-component-template",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/offgridnetworks/fuse-box-create-react-app/issues"
+  },
+  "dependencies": {}
+}

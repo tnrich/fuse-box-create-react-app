@@ -5,7 +5,7 @@
   "repository": "facebookincubator/create-react-app",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/facebookincubator/create-react-app/issues"
+    "url": "https://github.com/offgridnetworks/fuse-box-create-react-app/issues"
   },
   "engines": {
     "node": ">=4"

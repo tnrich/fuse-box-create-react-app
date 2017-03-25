@@ -15,7 +15,7 @@ var fs = require('fs');
 var url = require('url');
 
 // Make sure any symlinks in the project folder are resolved:
-// https://github.com/facebookincubator/create-react-app/issues/637
+// https://github.com/offgridnetworks/fuse-box-create-react-app/issues/637
 var appDirectory = fs.realpathSync(process.cwd());
 function resolveApp(relativePath) {
   return path.resolve(appDirectory, relativePath);
@@ -24,7 +24,7 @@ var packageJson = require(resolveApp('package.json'));
 
 // We support resolving modules according to `NODE_PATH`.
 // This lets you use absolute paths in imports inside large monorepos:
-// https://github.com/facebookincubator/create-react-app/issues/253.
+// https://github.com/offgridnetworks/fuse-box-create-react-app/issues/253.
 
 // It works similar to `NODE_PATH` in Node itself:
 // https://nodejs.org/api/modules.html#modules_loading_from_the_global_folders
@@ -35,7 +35,7 @@ var packageJson = require(resolveApp('package.json'));
 
 // Note that unlike in Node, only *relative* paths from `NODE_PATH` are honored.
 // Otherwise, we risk importing Node.js core modules into an app instead of Webpack shims.
-// https://github.com/facebookincubator/create-react-app/issues/1023#issuecomment-265344421
+// https://github.com/offgridnetworks/fuse-box-create-react-app/issues/1023#issuecomment-265344421
 
 var nodePaths = (process.env.NODE_PATH || '')
   .split(process.platform === 'win32' ? ';' : ':')
@@ -64,20 +64,28 @@ function getPackageDirectory(key, defaultdir) {
   var directories = packageJson.directories;
   if (directories && directories[key])
     return directories[key]
-  else 
+  else
     return defaultdir || key;
 }
 
-function getPackageDirectoryLast(key, defaultdir) {
+function resolveAppPackageDirectoryOrNull(key) {
   var directories = packageJson.directories;
   if (directories && directories[key])
-  {
+    return resolveApp(directories[key])
+  else
+    return null
+}
+
+
+function getPackageDirectoryLast(key, defaultdir) {
+  var directories = packageJson.directories;
+  if (directories && directories[key]) {
     if (Array.isArray(directories[key]))
-      return directories[key][directories[key].length-1]
+      return directories[key][directories[key].length - 1]
     else
       return directories[key]
   }
-  else 
+  else
     return defaultdir || key;
 }
 
@@ -97,9 +105,9 @@ function getServedPath() {
 
 function resolveAppArray(pathitem) {
 
-  if (Array.isArray(pathitem)) { 
+  if (Array.isArray(pathitem)) {
     var result = [];
-    pathitem.forEach(function(item){
+    pathitem.forEach(function (item) {
       result.push(resolveApp(item));
     });
     return result;
@@ -111,11 +119,13 @@ function resolveAppArray(pathitem) {
 // config after eject: we're in ./config/
 module.exports = {
   appBuild: resolveApp(getPackageDirectory('build')),
-  appBundle: resolveApp(getPackageDirectory('bundle', path.join('build', 'static' ,'js'))),
+  Bundle: getPackageDirectory('bundle', path.join('static', 'js')).replace(/^[\/\\]/, ""),
   appConfig: resolveApp(getPackageDirectory('config')),
   appPublic: resolveAppArray(getPackageDirectory('public')),
-  appHtml: resolveApp(path.join(getPackageDirectoryLast('public'), 'index.html')),
-  appIndexJs: resolveApp(packageJson.main || path.join(getPackageDirectory('src'), 'index.js')),
+  appStoriesJs: resolveAppPackageDirectoryOrNull('stories-js'),
+  appStoriesBuild: resolveApp(getPackageDirectory('stories-build', 'build-storybook')),
+  appHtml: function (file) { return resolveApp(path.join(getPackageDirectoryLast('public'), file)) },
+  appIndexJs: resolveApp(path.join(getPackageDirectory('src'), 'index.js')),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp(getPackageDirectory('src')),
   yarnLockFile: resolveApp('yarn.lock'),

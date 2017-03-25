@@ -13,10 +13,13 @@ const fsbx = require("fuse-box"),
     FuseBox = fsbx.FuseBox,
     path = require('path');
 
-exports.initBuilder = function initBuilderDev(paths, bundleFile) {
+exports.initBuilder = function initBuilderDev(paths, bundleFile, srcDir, targetDir) {
+    srcDir = srcDir || paths.appSrc;
+    targetDir = targetDir || path.join(paths.appBuild, paths.Bundle);
+
     return FuseBox.init({
-        homeDir: paths.appSrc,
-        outFile: path.join(paths.appBundle, bundleFile),
+        homeDir: srcDir,
+        outFile: path.join(targetDir, bundleFile),
         plugins: [
             fsbx.EnvPlugin({
                 "NODE_ENV": process.env.NODE_ENV

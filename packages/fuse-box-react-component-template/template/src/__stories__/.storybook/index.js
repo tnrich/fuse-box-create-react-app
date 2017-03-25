@@ -1,0 +1,1 @@
+require('@kadira/storybook/dist/client/manager');

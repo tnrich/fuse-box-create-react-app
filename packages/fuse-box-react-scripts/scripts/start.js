@@ -10,7 +10,7 @@
  */
 // @remove-on-eject-end
 
- var process = require('process');
+var process = require('process');
 process.env.NODE_ENV = "development";
 process.env.BABEL_ENV = 'production';
 
@@ -43,9 +43,16 @@ var cli = useYarn ? 'yarn' : 'npm';
 var isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
+if (!checkRequiredFiles([paths.appIndexJs, paths.appHtml('index.html')])) {
   process.exit(1);
 }
+
+if (paths.appStoriesJs && !checkRequiredFiles([
+  paths.appHtml('iframe.html'),
+  path.resolve(paths.appSrc, '__stories__/index.js')])) {
+  process.exit(1);
+}
+
 
 // Tools like Cloud9 rely on this.
 var DEFAULT_PORT = process.env.PORT || 3000;
@@ -60,6 +67,51 @@ function printErrors(summary, errors) {
   });
 }
 
+// Primary Build function for Create-React-App
+function buildApp(options) {
+
+  buildcommon.copyStaticFolder();
+
+  var server = buildcommon.initBuilder(port)
+    .devServer('>index.js', {
+      port: port,
+      root: paths.appBuild
+    });
+
+  server.httpServer.app.use(express.static(paths.appStoriesBuild));
+  server.httpServer.app.get('*', function (req, res) {
+    res.sendFile(path.join(paths.appStoriesBuild, 'index.html'));
+  });
+
+  return Promise.resolve(server);
+}
+
+// Alternative Build function for Create-React-Component
+function buildStoriesComponent(port) {
+
+  buildcommon.copyStaticFolder({ 'index.html': 'manager', 'iframe.html': 'stories' }, paths.appStoriesBuild);
+
+  return buildcommon.initBuilder('manager', paths.appStoriesJs, path.join(paths.appStoriesBuild, paths.Bundle))
+    .bundle(">index.js")
+    .then(function (val) {
+      if (!val) return Promise.reject(val);
+
+      var server = buildcommon.initBuilder('stories', paths.appSrc, path.join(paths.appStoriesBuild, paths.Bundle))
+        .devServer('>__stories__/index.js', {
+          port: port,
+          root: paths.appStoriesBuild
+        });
+
+      server.httpServer.app.use(express.static(paths.appStoriesBuild));
+      server.httpServer.app.get('*', function (req, res) {
+        res.sendFile(path.join(paths.appStoriesBuild, 'index.html'));
+      });
+
+      return server;
+
+    });
+}
+
 function runDevServer(host, port, protocol) {
 
   if (isInteractive) {
@@ -68,32 +120,25 @@ function runDevServer(host, port, protocol) {
 
   fs.emptyDirSync(paths.appBuild);
 
+  if (paths.appStoriesJs)
+    fs.emptyDirSync(paths.appStoriesBuild);
 
-  const fusebox = buildcommon.initBuilder();
+  var builder = paths.appStoriesJs ? buildStoriesComponent : buildApp;
 
-  try {
-    var server = fusebox.devServer('>index.js', {
-      port: port,
-      root: paths.appBuild
+  var server = builder(port)
+    .then(function (server) {
+      process.nextTick(() => {
+
+        console.log(chalk.cyan('Starting the development server...'));
+        console.log();
+
+        openBrowser(protocol + '://' + host + ':' + port + '/');
+      });
+    }).catch(function (err) {
+      printErrors('Failed during development hosting', [err]);
+      process.exit(1);
     });
-    server.httpServer.app.use(express.static(paths.appBuild));
-    server.httpServer.app.get('*', function(req, res) {
-      res.sendFile(path.join(paths.appBuild, 'index.html'));
-    });
-  } catch (err) {
-    printErrors('Failed during development hosting', [err]);
-    process.exit(1);
-  }
 
-  process.nextTick(() => {
-    buildcommon.copyStaticFolder();
-    buildcommon.copyHTMLFile();
-
-    console.log(chalk.cyan('Starting the development server...'));
-    console.log();
-
-    openBrowser(protocol + '://' + host + ':' + port + '/');
-  });
 }
 
 function run(port) {
@@ -130,8 +175,3 @@ detect(DEFAULT_PORT).then(port => {
 
 var useYarn = fs.existsSync(paths.yarnLockFile);
 
-// Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
-  process.exit(1);
-}
-    

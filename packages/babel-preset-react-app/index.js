@@ -39,12 +39,12 @@ const plugins = [
 // https://babeljs.io/docs/usage/babelrc/#env-option
 // We are not using `env` because it’s ignored in versions > babel-core@6.10.4:
 // https://github.com/babel/babel/issues/4539
-// https://github.com/facebookincubator/create-react-app/issues/720
+// https://github.com/offgridnetworks/fuse-box-create-react-app/issues/720
 // It’s also nice that we can enforce `NODE_ENV` being specified.
 var env = process.env.BABEL_ENV || process.env.NODE_ENV;
 if (env !== 'development' && env !== 'test' && env !== 'production') {
   throw new Error(
-    'Using `babel-preset-react-app` requires that you specify `NODE_ENV` or '+
+    'Using `babel-preset-react-app` requires that you specify `NODE_ENV` or ' +
     '`BABEL_ENV` environment variables. Valid values are "development", ' +
     '"test", and "production". Instead, received: ' + JSON.stringify(env) + '.'
   );
@@ -56,7 +56,7 @@ if (env === 'development' || env === 'test') {
   // currently not enabled in babel-preset-react. See the below threads for more info:
   // https://github.com/babel/babel/issues/4702
   // https://github.com/babel/babel/pull/3540#issuecomment-228673661
-  // https://github.com/facebookincubator/create-react-app/issues/989
+  // https://github.com/offgridnetworks/fuse-box-create-react-app/issues/989
   plugins.push.apply(plugins, [
     // Adds component stack to warning messages
     require.resolve('babel-plugin-transform-react-jsx-source'),
@@ -110,7 +110,7 @@ if (env === 'test') {
   if (env === 'production') {
     // Optimization: hoist JSX that never changes out of render()
     // Disabled because of issues:
-    // * https://github.com/facebookincubator/create-react-app/issues/525
+    // * https://github.com/offgridnetworks/fuse-box-create-react-app/issues/525
     // * https://phabricator.babeljs.io/search/query/pCNlnC2xzwzx/
     // * https://github.com/babel/babel/issues/4516
     // TODO: Enable again when these issues are resolved.

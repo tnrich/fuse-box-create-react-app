@@ -1,7 +1,8 @@
-# FuseBox Create React App [![Build Status](https://travis-ci.org/facebookincubator/create-react-app.svg?branch=master)](https://travis-ci.org/facebookincubator/create-react-app)
+# FuseBox Create React App
 
-Create React apps with no build configuration, with [FuseBox](http://fuse-box.org).
+Create React apps and components with no build configuration, with [FuseBox](http://fuse-box.org).
 [FEBRUARY 2017] Forked from the Facebook Incubator version that to use [FuseBox](http://fuse-box.org) instead of webpack.
+[MARCH 2017] Added equivalent ability to create components instead of apps, with React Storybook pre-integrated for testing / showcasing the use of a component without the need for any additional host app
 
 * [Getting Started](#getting-started) – How to create a new app.
 * [User Guide](https://github.com/offgridnetworks/fuse-box-create-react-app/blob/master/packages/fuse-box-react-scripts/template/README.md) – How to develop apps bootstrapped with Create React App.
@@ -44,7 +45,17 @@ cd my-app/
 npm start
 ```
 
-Then open [http://localhost:3000/](http://localhost:3000/) to see your app.<br>
+or to create a re-usable React Component with demo pages already setup using React Storybook
+
+```sh
+npm install -g fuse-box-create-react-app
+
+create-react-component my-component
+cd my-component/
+npm start
+```
+
+Then open [http://localhost:3000/](http://localhost:3000/) to see your app or component.<br>
 When you’re ready to deploy to production, create a minified bundle with `npm run build`.
 
 <img src='https://camo.githubusercontent.com/506a5a0a33aebed2bf0d24d3999af7f582b31808/687474703a2f2f692e696d6775722e636f6d2f616d794e66434e2e706e67' width='600' alt='npm start'>
@@ -98,6 +109,39 @@ my-app/
 No configuration or complicated folder structures, just the files you need to build your app.<br>
 Once the installation is done, you can run some commands inside the project folder:
 
+### Creating a Component
+
+To create a new component, run:
+
+```sh
+create-react-component my-componennt
+cd my-componennt
+```
+
+It will create a directory called `my-componennt` inside the current folder.<br>
+Inside that directory, it will generate the initial project structure and install the transitive dependencies:
+
+```
+my-app/
+  README.md
+  node_modules/
+  package.json
+  .gitignore
+  .npmignore
+  src/
+    __stories__
+    ComponentA
+      ComponentA.css
+      ComponentA.js
+      ComponentA.test.js
+      logo.svg
+    public
+    index.js
+```
+
+No configuration or complicated folder structures, just the files you need to build your component and showcase it to the world with React Storybook.<br>
+Once the installation is done, you can run some commands inside the project folder:
+
 ### `npm start` or `yarn start`
 
 Runs the app in development mode.<br>
@@ -107,6 +151,7 @@ The page will reload if you make edits.<br>
 You will see the build errors and lint warnings in the console.
 
 <img src='https://camo.githubusercontent.com/41678b3254cf583d3186c365528553c7ada53c6e/687474703a2f2f692e696d6775722e636f6d2f466e4c566677362e706e67' width='600' alt='Build errors'>
+
 
 ### `npm test` or `yarn test`
 
@@ -122,6 +167,12 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
+
+### `npm run deploy` or `yarn deploy` (for components only)
+
+Run this after `npm run build`.  
+
+Deploys the storybook static pages for production to the `gh-pages` branch.<br>
 
 ## User Guide
 

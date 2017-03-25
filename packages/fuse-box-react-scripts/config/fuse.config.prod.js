@@ -13,18 +13,18 @@ const fsbx = require("fuse-box"),
     FuseBox = fsbx.FuseBox,
     path = require('path');
 
-exports.initBuilder = function initBuilderProd(paths, bundleFile) {
+exports.initBuilder = function initBuilderProd(paths, bundleFile, srcDir, targetDir) {
+    srcDir = srcDir || paths.appSrc;
+    targetDir = targetDir || path.join(paths.appBuild, paths.Bundle);
+
     return FuseBox.init({
-        homeDir: paths.appSrc,
-        sourceMap: {
-            bundleReference: "sourcemaps.js.map",
-            outFile: path.join(paths.appBundle, "sourcemaps.js.map"),
-        },
-        outFile: path.join(paths.appBundle, bundleFile),
+        homeDir: srcDir,
+        sourceMaps: true,
+        outFile: path.join(targetDir, bundleFile),
         plugins: [
-             fsbx.EnvPlugin({
-            "NODE_ENV":  process.env.NODE_ENV
-        }),
+            fsbx.EnvPlugin({
+                "NODE_ENV": process.env.NODE_ENV
+            }),
             fsbx.SVGPlugin(),
             fsbx.CSSPlugin(),
             fsbx.HTMLPlugin({ useDefault: false }),

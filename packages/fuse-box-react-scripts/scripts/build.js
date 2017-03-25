@@ -31,7 +31,13 @@ var checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 var useYarn = fs.existsSync(paths.yarnLockFile);
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
+if (!checkRequiredFiles([paths.appIndexJs, paths.appHtml('index.html')])) {
+  process.exit(1);
+}
+
+if (paths.appStoriesJs && !checkRequiredFiles([
+  paths.appHtml('iframe.html'),
+  path.resolve(paths.appSrc, '__stories__/index.js')])) {
   process.exit(1);
 }
 
@@ -41,24 +47,60 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
   // if you're in it, you don't end up in Trash
   fs.emptyDirSync(paths.appBuild);
 
+  if (paths.appStoriesJs)
+    fs.emptyDirSync(paths.appStoriesBuild);
+
   // Start the fuse-box build and then copy static assets
   build();
 
 })();
 
+// Primary Build function for Create-React-App
+function buildApp() {
+  return buildcommon.initBuilder()
+    .bundle(">index.js")
+    .then(function (val) {
+      if (!val) return val;
+
+      buildcommon.copyStaticFolder();
+
+      return val;
+    })
+}
+
+// Alternative Build function for Create-React-Component
+function buildStoriesComponent() {
+
+  return buildcommon.initBuilder('index', paths.appSrc, path.join(paths.appBuild), true)
+    .bundle(">index.js")
+    .then(function (val) {
+      return buildcommon.initBuilder('manager', paths.appStoriesJs, path.join(paths.appStoriesBuild, paths.Bundle))
+        .bundle(">index.js")
+        .then(function (val) {
+          if (!val) return val;
+          return buildcommon.initBuilder('stories', paths.appSrc, path.join(paths.appStoriesBuild, paths.Bundle))
+            .bundle(">__stories__/index.js");
+        }).then(function (val) {
+          if (!val) return val;
+
+          buildcommon.copyStaticFolder({ 'index.html': 'manager', 'iframe.html': 'stories' }, paths.appStoriesBuild);
+
+          return val;
+        })
+    });
+}
+
 // Create the production build and print the deployment instructions.
 function build() {
   console.log('Creating an optimized production build...');
 
-  return buildcommon.initBuilder()
-    .bundle(">index.js")
+  var builder = paths.appStoriesJs ? buildStoriesComponent : buildApp;
+
+  return builder()
     .then(function (val) {
       if (val) {
         console.log(chalk.green('Compiled successfully.'));
         console.log();
-
-        buildcommon.copyStaticFolder();
-        buildcommon.copyHTMLFile();
 
         var openCommand = process.platform === 'win32' ? 'start' : 'open';
         var appPackage = require(paths.appPackageJson);
@@ -125,7 +167,7 @@ function build() {
           } else {
             console.log('  ' + chalk.cyan('npm') + ' install -g pushstate-server');
           }
-          console.log('  ' + chalk.cyan('pushstate-server') + ' build');
+          console.log('  ' + chalk.cyan('pushstate-server') + paths.appStoriesJs ? paths.appStoriesBuild : paths.appBuild);
           console.log('  ' + chalk.cyan(openCommand) + ' http://localhost:9000');
           console.log();
         }
