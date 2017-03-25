@@ -72,7 +72,7 @@ function buildApp(port) {
 
   buildcommon.copyStaticFolder();
 
-  var server = buildcommon.initBuilder(port)
+  var server = buildcommon.initBuilder()
     .devServer('>index.js', {
       port: port,
       root: paths.appBuild
