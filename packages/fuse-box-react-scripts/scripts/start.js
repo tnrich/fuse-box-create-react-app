@@ -78,9 +78,9 @@ function buildApp(port) {
       root: paths.appBuild
     });
 
-  server.httpServer.app.use(express.static(paths.appStoriesBuild));
+  server.httpServer.app.use(express.static(paths.appBuild));
   server.httpServer.app.get('*', function (req, res) {
-    res.sendFile(path.join(paths.appStoriesBuild, 'index.html'));
+    res.sendFile(path.join(paths.appBuild, 'index.html'));
   });
 
   return Promise.resolve(server);
