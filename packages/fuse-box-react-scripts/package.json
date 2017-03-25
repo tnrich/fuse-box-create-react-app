@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-scripts",
-  "version": "0.9.29",
+  "version": "0.9.30",
   "description": "Configuration and scripts for Fuse-Box Create React App.",
   "repository": "offgridnetworks/fuse-box-react-component-template",
   "license": "BSD-3-Clause",
@@ -24,7 +24,7 @@
     "fuse-box-react-scripts": "./bin/fuse-box-react-scripts.js"
   },
   "dependencies": {
-    "babel-core": "^6.24.1",
+    "babel-core": "^6.24.0",
     "babel-preset-react-app": "^2.2.0",
     "babel-jest": "19.0.0",
     "whatwg-fetch": "2.0.3",
