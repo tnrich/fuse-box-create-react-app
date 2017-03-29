@@ -71,8 +71,7 @@ function buildApp() {
 // Alternative Build function for Create-React-Component
 function buildStoriesComponent() {
 
-  return buildcommon.initBuilder('index', paths.appSrc, path.join(paths.appBuild), true)
-    .bundle(">index.js")
+  return buildcommon.buildBabel(paths.appSrc, paths.appBuild)
     .then(function (val) {
       return buildcommon.initBuilder('manager', paths.appStoriesJs, path.join(paths.appStoriesBuild, paths.Bundle))
         .bundle(">index.js")

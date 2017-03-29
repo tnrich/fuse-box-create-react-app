@@ -50,3 +50,16 @@ exports.initBuilder = function initBuilderProd(paths, bundleFile, srcDir, target
         ]
     });
 }
+
+exports.babelConfig = function babelConfig(srcDir, targetDir) {
+    srcDir = srcDir || paths.appSrc;
+    targetDir = targetDir || paths.appBuild;
+
+    return {
+        homeDir: srcDir,
+        sourceMaps: false,
+        outDir: targetDir,
+        presets: ['react-app']
+    }
+}
+

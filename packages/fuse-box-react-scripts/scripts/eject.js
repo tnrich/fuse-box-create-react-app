@@ -60,7 +60,8 @@ prompt(
     path.join('scripts', 'build.js'),
     path.join('scripts', 'start.js'),
     path.join('scripts', 'test.js'),
-    path.join('scripts', 'build-common.js')
+    path.join('scripts', 'build-common.js'),
+    path.join('scripts', 'build-babel.js')
   ];
 
   // Ensure that the app folder is clean and we won't override any files
@@ -68,13 +69,13 @@ prompt(
   files.forEach(verifyAbsent);
 
   // Copy the files over
-  folders.forEach(function(folder) {
+  folders.forEach(function (folder) {
     fs.mkdirSync(path.join(appPath, folder))
   });
 
   console.log();
   console.log(cyan('Copying files into ' + appPath));
-  files.forEach(function(file) {
+  files.forEach(function (file) {
     console.log('  Adding ' + cyan(file) + ' to the project');
     var content = fs
       .readFileSync(path.join(ownPath, file), 'utf8')
@@ -143,7 +144,7 @@ prompt(
   appPackage.babel = babelConfig;
 
   // Add ESlint config
-  console.log('  Adding ' + cyan('ESLint') +' configuration');
+  console.log('  Adding ' + cyan('ESLint') + ' configuration');
   appPackage.eslintConfig = eslintConfig;
 
   fs.writeFileSync(
@@ -155,11 +156,11 @@ prompt(
   if (fs.existsSync(paths.yarnLockFile)) {
     console.log(cyan('Running yarn...'));
     fs.removeSync(ownPath);
-    spawnSync('yarnpkg', [], {stdio: 'inherit'});
+    spawnSync('yarnpkg', [], { stdio: 'inherit' });
   } else {
     console.log(cyan('Running npm install...'));
     fs.removeSync(ownPath);
-    spawnSync('npm', ['install'], {stdio: 'inherit'});
+    spawnSync('npm', ['install'], { stdio: 'inherit' });
   }
   console.log(green('Ejected successfully!'));
   console.log();
