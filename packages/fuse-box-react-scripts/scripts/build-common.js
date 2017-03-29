@@ -9,165 +9,130 @@
  */
 // @remove-on-eject-end
 
-const uniq = require("lodash/uniq"),
-    glob = require("glob"),
-    outputFileSync = require("output-file-sync"),
-    slash = require("slash"),
-    path = require("path"),
-    defaults = require("lodash/defaults"),
-    fs = require("fs"),
-    readdir = require("fs-readdir-recursive"),
-    babel = require("babel-core"),
-    minimatch = require("minimatch"),
-    includes = require("lodash/includes");
+const paths = require('../config/paths'),
+    fsbx = require("fuse-box"),
+    FuseBox = fsbx.FuseBox,
+    path = require('path'),
+    fs = require('fs-extra'),
+    chalk = require('chalk'),
+    buildbabel = require('./build-babel');
 
-var default_options = {
-    extensions: [".js", ".jsx", ".es6", ".es"],
-    copyFiles: true,
-    BABEL_ENV: "production",
-    outDir: "./dist",
-    srcExcludes: ["**/__stories__/**/*"],
-    sourceMaps: false,
-    presets: ['react-app'],
+var nonce = 'xxxxxxxx-xxxx-4xxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+})
+
+const bundleSuffix = '-' + nonce + '.js';
+const BUNDLE = 'bundle'
+
+exports.initBuilder = function (bundlePrefix, srcDir, targetDir, nononce) {
+
+    var bundleFile = nononce ? (bundlePrefix + '.js') : (bundlePrefix || BUNDLE) + bundleSuffix
+
+    var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
+    var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
+
+    // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
+    if (fs.existsSync(path.join(paths.appConfig, fuseConfigFile)))
+        fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
+
+    var fuseConfig = require(fuseConfigPath);
+    return fuseConfig.initBuilder(paths, bundleFile, srcDir, targetDir);
 }
 
-var options, opts = {};
+exports.buildBabel = function (srcDir, targetDir) {
 
-module.exports = function build(build_options) {
+    var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
+    var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
 
-    options = defaults(build_options, default_options)
+    // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
+    if (fs.existsSync(path.join(paths.appConfig, fuseConfigFile)))
+        fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
 
-    Object.keys(babel.options).forEach(function (key) {
-        const opt = babel.options[key];
-        if (options[key] !== undefined && options[key] !== opt.default) {
-            opts[key] = options[key];
+    var fuseConfig = require(fuseConfigPath);
+    return buildbabel(fuseConfig.babelConfig(srcDir, targetDir));
+}
+
+exports.copyStaticFolder = function copyStaticFolder(htmlBundleMap, targetDir) {
+
+    htmlBundleMap = htmlBundleMap || { 'index.html': BUNDLE };
+    targetDir = targetDir || paths.appBuild;
+
+    fs.ensureDirSync(targetDir);
+
+    var excludingPaths = Object.keys(htmlBundleMap).map(function (key) { return paths.appHtml(key) })
+
+    if (Array.isArray(paths.appPublic)) {
+        paths.appPublic.forEach(function (pathPublic) {
+            fs.copySync(pathPublic, targetDir, {
+                dereference: true,
+                filter: file => !(excludingPaths.includes(file))
+            });
+        })
+    } else {
+        fs.copySync(paths.appPublic, targetDir, {
+            dereference: true,
+            filter: file => !(excludingPaths.includes(file))
+        });
+    }
+
+    copyHTMLFiles_(htmlBundleMap, targetDir);
+
+    console.log(chalk.green('Copied static assets.'));
+    console.log();
+}
+
+function copyHTMLFiles_(htmlBundleMap, targetDir) {
+    targetDir = targetDir || paths.appBuild;
+
+    var publicUrl = paths.publicUrl || "/";
+
+    Object.keys(htmlBundleMap).forEach(function (file) {
+        var bundlePrefix = htmlBundleMap[file];
+        var relativeBundle = '/' + path.join(paths.Bundle, bundlePrefix + bundleSuffix).replace(path.sep, '/');
+        console.log('  Copying ' + chalk.cyan(file) + ' to the build folder');
+        var content = fs
+            .readFileSync(paths.appHtml(file), 'utf8')
+            .replace(/%PUBLIC_URL%/g, publicUrl.replace(/\/$/, ''))
+            .replace(/<\/body>/g, '<script type="text/javascript" src="' + relativeBundle + '"></script></body>')
+        fs.writeFileSync(path.join(targetDir, file), content);
+    });
+    console.log();
+}
+
+if (!Array.prototype.includes) {
+    Object.defineProperty(Array.prototype, 'includes', {
+        value: function (searchElement, fromIndex) {
+
+            if (this == null) {
+                throw new TypeError('"this" is null or not defined');
+            }
+
+            var o = Object(this);
+
+            var len = o.length >>> 0;
+
+            if (len === 0) {
+                return false;
+            }
+
+            var n = fromIndex | 0;
+
+            var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+            function sameValueZero(x, y) {
+                return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y));
+            }
+
+            while (k < len) {
+                if (sameValueZero(o[k], searchElement)) {
+                    return true;
+                }
+                k++;
+            }
+
+            return false;
         }
     });
-
-    process.env.BABEL_ENV = options.BABEL_ENV;
-
-    handle(options.homeDir);
-
-    return Promise.resolve(true);
-
 }
-
-function write(src, relative) {
-    if (!util.isCompilableExtension(relative, options.extensions)) return false;
-
-    // remove extension and then append back on .js
-    relative = relative.replace(/\.(\w*?)$/, "") + ".js";
-
-    const dest = path.join(options.outDir, relative);
-
-    const data = util.compile(src, defaults({
-        sourceFileName: slash(path.relative(dest + "/..", src)),
-        sourceMapTarget: path.basename(relative),
-    }, opts));
-
-    if (!data) return false;
-
-    // we've requested explicit sourcemaps to be written to disk
-    if (data.map && options.sourceMaps && options.sourceMaps !== "inline") {
-        const mapLoc = dest + ".map";
-        data.code = util.addSourceMappingUrl(data.code, mapLoc);
-        outputFileSync(mapLoc, JSON.stringify(data.map));
-    }
-
-    outputFileSync(dest, data.code);
-    util.chmod(src, dest);
-
-    util.log(src + " -> " + dest);
-
-    return true;
-}
-
-function handleFile(src, filename) {
-
-    var fullPath = path.join(src, filename);
-
-    var include = (options.srcExcludes).reduce(function (include, pattern) {
-        return include && !minimatch(fullPath, pattern);
-    }, true)
-
-    if (include) {
-
-        const didWrite = write(src, filename);
-
-        if (!didWrite && options.copyFiles) {
-            const dest = path.join(options.outDir, filename);
-            outputFileSync(dest, fs.readFileSync(src));
-            util.chmod(src, dest);
-        }
-    }
-}
-
-function handle(filename) {
-    if (!fs.existsSync(filename)) return;
-
-    const stat = fs.statSync(filename);
-
-    if (stat.isDirectory(filename)) {
-        const dirname = filename;
-
-        readdir(dirname).forEach(function (filename) {
-            const src = path.join(dirname, filename);
-            handleFile(src, filename);
-        });
-    } else {
-        write(filename, filename);
-    }
-}
-
-const util = {
-    "chmod": function chmod(src, dest) {
-        fs.chmodSync(dest, fs.statSync(src).mode);
-    },
-    "readdirFilter": function readdirFilter(filename) {
-        return readdir(filename).filter(function (filename) {
-            return babel.util.isCompilableExtension(filename);
-        });
-    },
-    "isCompilableExtension": function isCompilableExtension(filename, altExts) {
-        const exts = altExts || babel.DEFAULT_EXTENSIONS;
-        const ext = path.extname(filename);
-        return includes(exts, ext);
-    },
-    "addSourceMappingUrl": function addSourceMappingUrl(code, loc) {
-        return code + "\n//# sourceMappingURL=" + path.basename(loc);
-    },
-    "log": function log(msg) {
-        console.log(msg);
-    },
-    "transform": function transform(filename, code, opts) {
-        opts = Object.assign({}, opts, {
-            filename,
-        });
-
-        return babel.transform(code, opts);
-    },
-    "compile": function compile(filename, opts) {
-        try {
-            return babel.transformFileSync(filename, opts);
-        } catch (err) {
-
-            throw err;
-
-        }
-    }
-}
-
-function toErrorStack(err) {
-    if (err._babel && err instanceof SyntaxError) {
-        return `${err.name}: ${err.message}\n${err.codeFrame}`;
-    } else {
-        return err.stack;
-    }
-}
-
-process.on("uncaughtException", function (err) {
-    console.error(toErrorStack(err));
-    process.exit(1);
-});
-
-
+Contact GitHub API Training Shop Blog About
