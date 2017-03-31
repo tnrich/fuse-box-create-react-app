@@ -11,7 +11,6 @@
 
 const uniq = require("lodash/uniq"),
     glob = require("glob"),
-    outputFileSync = require("output-file-sync"),
     slash = require("slash"),
     path = require("path"),
     defaults = require("lodash/defaults"),
@@ -71,10 +70,10 @@ function write(src, relative) {
     if (data.map && options.sourceMaps && options.sourceMaps !== "inline") {
         const mapLoc = dest + ".map";
         data.code = util.addSourceMappingUrl(data.code, mapLoc);
-        outputFileSync(mapLoc, JSON.stringify(data.map));
+        fs.writeFileSync(mapLoc, JSON.stringify(data.map));
     }
 
-    outputFileSync(dest, data.code);
+    fs.writeFileSync(dest, data.code);
     util.chmod(src, dest);
 
     util.log(src + " -> " + dest);
@@ -96,7 +95,7 @@ function handleFile(src, filename) {
 
         if (!didWrite && options.copyFiles) {
             const dest = path.join(options.outDir, filename);
-            outputFileSync(dest, fs.readFileSync(src));
+            fs.writeFileSync(dest, fs.readFileSync(src));
             util.chmod(src, dest);
         }
     }

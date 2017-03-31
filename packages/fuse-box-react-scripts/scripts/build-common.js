@@ -14,8 +14,7 @@ const paths = require('../config/paths'),
     FuseBox = fsbx.FuseBox,
     path = require('path'),
     fs = require('fs-extra'),
-    chalk = require('chalk'),
-    buildbabel = require('./build-babel');
+    chalk = require('chalk');
 
 var nonce = 'xxxxxxxx-xxxx-4xxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -41,6 +40,8 @@ exports.initBuilder = function (bundlePrefix, srcDir, targetDir, nononce) {
 }
 
 exports.buildBabel = function (srcDir, targetDir) {
+
+    const buildbabel = require('./build-babel');
 
     var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
     var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
