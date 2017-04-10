@@ -1,6 +1,6 @@
 // @remove-on-eject-begin
 /**
- * Copyright (c) 2017-present, Off Grid Networks. 
+ * Copyright (c) 2017-present, Off Grid Networks.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -11,6 +11,7 @@
 
 const fsbx = require("fuse-box"),
     FuseBox = fsbx.FuseBox,
+    env = require('./env')(),
     path = require('path');
 
 exports.initBuilder = function initBuilderProd(paths, bundleFile, srcDir, targetDir) {
@@ -22,9 +23,7 @@ exports.initBuilder = function initBuilderProd(paths, bundleFile, srcDir, target
         sourceMaps: true,
         outFile: path.join(targetDir, bundleFile),
         plugins: [
-            fsbx.EnvPlugin({
-                "NODE_ENV": process.env.NODE_ENV
-            }),
+            fsbx.EnvPlugin(env.raw),
             fsbx.SVGPlugin(),
             fsbx.CSSPlugin(),
             fsbx.HTMLPlugin({ useDefault: false }),
