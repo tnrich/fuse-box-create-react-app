@@ -20,7 +20,6 @@ exports.initBuilder = function initBuilderDev(paths, bundleFile, srcDir, targetD
 
     return FuseBox.init({
         homeDir: srcDir,
-        sourceMaps: true,
         outFile: path.join(targetDir, bundleFile),
         plugins: [
             fsbx.EnvPlugin(env.raw),

@@ -20,7 +20,6 @@ exports.initBuilder = function initBuilderProd(paths, bundleFile, srcDir, target
 
     return FuseBox.init({
         homeDir: srcDir,
-        sourceMaps: true,
         outFile: path.join(targetDir, bundleFile),
         plugins: [
             fsbx.EnvPlugin(env.raw),
@@ -29,7 +28,7 @@ exports.initBuilder = function initBuilderProd(paths, bundleFile, srcDir, target
             fsbx.HTMLPlugin({ useDefault: false }),
             fsbx.BabelPlugin({
                 config: {
-                    sourceMaps: true,
+                    sourceMaps: false,
                     presets: ['react-app']
                 }
             }),
